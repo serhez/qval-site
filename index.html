@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>QVal — Evaluate dense supervision signals before you train</title>
+        <meta
+            name="description"
+            content="QVal is a training-free testbed that measures whether a dense supervision signal is value-aligned with reference Q-values — separating signal quality from training engineering. Install it, see how it works, and extend it to your own environments."
+        />
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.92em' font-size='86' font-family='Georgia,serif'>Q</text></svg>"
+        />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <a class="skip" href="#main">Skip to content</a>
+
+        <header class="nav" id="top">
+            <div class="wrap nav-inner">
+                <a class="brand" href="#top">QVal</a>
+                <nav class="nav-links" aria-label="Primary">
+                    <a href="#tool">The tool</a>
+                    <a href="#study">The study</a>
+                    <a href="#cite">Cite</a>
+                </nav>
+                <div class="nav-cta">
+                    <a class="ghost" href="paper.pdf">Paper</a>
+                    <a class="ghost" href="https://github.com/bethgelab/lit-benchmark" target="_blank" rel="noopener"
+                        >GitHub</a
+                    >
+                    <button class="burger" aria-label="Menu" aria-expanded="false">≡</button>
+                </div>
+            </div>
+        </header>
+
+        <main id="main">
+            <!-- HERO -->
+            <section class="hero">
+                <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+                <div class="wrap hero-inner">
+                    <p class="kicker">A training-free testbed for dense supervision</p>
+                    <h1>Evaluate a reward signal<br /><span class="em">before</span> you train.</h1>
+                    <p class="dek">
+                        Long-horizon LLM agents take hundreds of actions, yet an outcome-only reward tells them nothing
+                        about the steps along the way. <strong>QVal</strong> measures whether a dense supervision signal
+                        is <em>value-aligned</em> — whether it orders actions the way reference Q-values do — so signal
+                        quality can be judged on common ground, cheaply, and apart from the engineering of any training
+                        pipeline.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn btn-fill" href="paper.pdf">Read the paper</a>
+                        <a class="btn" href="#quickstart">Get started</a>
+                        <a class="btn" href="https://github.com/bethgelab/lit-benchmark" target="_blank" rel="noopener"
+                            >Code</a
+                        >
+                        <a
+                            class="btn"
+                            href="https://huggingface.co/datasets/bethgelab/lit-benchmark/"
+                            target="_blank"
+                            rel="noopener"
+                            >Datasets</a
+                        >
+                    </div>
+                    <p class="byline">
+                        Sergio Hernández-Gutiérrez · Matteo Merler · Ilze Amanda Auzina · Joschka Strüber · Ameya Prabhu
+                        · Matthias Bethge
+                        <br /><span class="muted"
+                            >Tübingen AI Center · Fondazione Bruno Kessler · arXiv preprint coming soon</span
+                        >
+                    </p>
+                </div>
+
+                <div class="wrap">
+                    <div class="terminal" aria-hidden="true">
+                        <div class="term-bar">
+                            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span
+                            ><span class="term-title">qval — evaluate a candidate signal</span>
+                        </div>
+                        <pre class="term-body"><code id="typed"></code><span class="caret"></span></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== ZONE: THE TESTBED ===== -->
+            <div class="zone zone-tool">
+                <!-- intro: trajectory-tree motif behind "The tool" + "The bottleneck" -->
+                <div class="tool-intro">
+                    <canvas class="tree-canvas" id="tool-tree" aria-hidden="true"></canvas>
+                <div class="half-opener" id="tool">
+                    <div class="wrap">
+                        <div class="measure">
+                            <p class="half-kicker">The tool</p>
+                            <h2 class="half-title">A testbed for the post-training community</h2>
+                            <p class="half-lead">
+                                What QVal measures, why value-alignment is the right target, and how to install, run,
+                                and extend it on your own methods and environments.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROBLEM -->
+                <section class="prose" id="problem">
+                    <div class="wrap">
+                        <div class="measure">
+                            <h2>The bottleneck</h2>
+                            <p>
+                                Dense supervision methods — from intrinsic confidence and self-distillation to embedding
+                                similarity and generated code — all try to score intermediate steps. But the field
+                                evaluates them by dropping each into a full post-training pipeline and reading off the
+                                downstream accuracy gain.
+                            </p>
+                            <p>
+                                That is expensive, it conflates the quality of the signal with the engineering choices
+                                around it — the algorithm, normalization, loss integration, interactions with other
+                                signals — and it makes methods that require different training setups impossible to
+                                compare. As a result, dense supervision methods are rarely measured on common ground.
+                            </p>
+                            <blockquote>
+                                “Can we evaluate dense supervision signals in isolation, before expensive post-training
+                                runs?”
+                            </blockquote>
+                        </div>
+                    </div>
+                </section>
+                </div>
+                <!-- /tool-intro -->
+
+                <!-- THE IDEA -->
+                <section class="band" id="idea">
+                    <div class="wrap">
+                        <div class="idea-head">
+                            <h2>The idea: value-alignment</h2>
+                            <p class="lead">
+                                A dense supervision method assigns a scalar score <code>k(s, a)</code> to each action.
+                                QVal measures one property: whether that score is a strictly increasing function of the
+                                reference Q-value — i.e. whether it ranks decisions the way their eventual return does.
+                            </p>
+                            <div class="eq" role="math" aria-label="k of s, a equals phi of Q superscript pi of s, a, where phi is strictly increasing">
+                            <span class="eq-body"
+                                ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>φ</i>(<i>Q</i
+                                ><sup><i>π</i></sup>(<i>s</i>,&thinsp;<i>a</i>))</span
+                            >
+                            <span class="eq-where">where <i>φ</i> is strictly increasing</span>
+                        </div>
+                            <p class="lead">
+                                The reference Q-value is the expected return of continuing from <code>(s, a)</code>
+                                under a strong reference policy — a scripted optimal policy or planner where one exists,
+                                a frontier model where it does not. Predictions live on incompatible scales — raw
+                                scores, code outputs, log-probabilities, embedding distances — so we compare the
+                                <em>ordering</em> they induce, reporting <strong>Spearman&nbsp;ρ</strong> against the
+                                reference labels. Same inputs, same targets, fixed backbones: the signal is judged on
+                                its own.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HOW IT WORKS -->
+                <section class="band band-tint" id="how">
+                    <div class="wrap">
+                        <h2>How the testbed works</h2>
+                        <p class="lead measure">
+                            The same five-stage recipe runs for every environment — which is exactly what makes QVal
+                            cheap to run and easy to extend.
+                        </p>
+                        <ol class="flow">
+                            <li>
+                                <b>Collect trajectories.</b> Roll agents out in diverse multi-turn environments and
+                                record their decision points.
+                            </li>
+                            <li>
+                                <b>Sample state–action pairs.</b> Draw <code>(s, a)</code> pairs along the trajectories
+                                as evaluation points.
+                            </li>
+                            <li>
+                                <b>Label with reference Q-values.</b> Restore each state, force the action, follow the
+                                reference policy, and record the discounted return — a Max-Value Monte&nbsp;Carlo
+                                estimate.
+                            </li>
+                            <li><b>Collect method predictions.</b> Run the method under test to score every pair.</li>
+                            <li>
+                                <b>Evaluate by rank correlation.</b> Report Spearman&nbsp;ρ between the method's scores
+                                and the reference labels.
+                            </li>
+                        </ol>
+                        <figure class="figure-hero">
+                            <div class="pipe" aria-label="QVal pipeline: from one sampled state–action pair to a value-alignment score">
+                                <div class="px">
+                                    <!-- build the two scores for one sampled point -->
+                                    <div class="px-make">
+                                        <p class="px-act">For one sampled point</p>
+                                        <ol class="pb">
+                                            <span class="pb-token" aria-hidden="true"></span>
+                                            <li class="pb-step">
+                                                <div class="pb-rail"><span class="pb-dot"></span></div>
+                                                <div class="pb-body">
+                                                    <div class="pb-text">
+                                                        <h3 class="pb-name">Collect &amp; sample</h3>
+                                                        <p class="pb-desc">pluck a decision point</p>
+                                                    </div>
+                                                    <div class="pb-art">
+                                                        <span class="pb-states" aria-hidden="true"><i></i><i></i><i class="on"></i><i></i><i></i></span>
+                                                        <span class="pb-arrow">&rarr;</span>
+                                                        <span class="pb-pill">(s,&nbsp;a)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="pb-step">
+                                                <div class="pb-rail"><span class="pb-dot"></span></div>
+                                                <div class="pb-body">
+                                                    <div class="pb-text">
+                                                        <h3 class="pb-name">Label · MVMC</h3>
+                                                        <p class="pb-desc">best of <i>k</i> rollouts</p>
+                                                    </div>
+                                                    <div class="pb-art">
+                                                        <svg viewBox="0 0 120 64" class="pb-fan" aria-hidden="true">
+                                                            <g fill="none" stroke="var(--line-2)" stroke-width="1.4" stroke-linecap="round" pathLength="1">
+                                                                <path d="M12,32 Q52,8 96,12" /><path d="M12,32 Q52,22 96,26" />
+                                                                <path d="M12,32 Q52,42 96,42" /><path d="M12,32 Q52,54 96,56" />
+                                                            </g>
+                                                            <path class="pb-fan-max" d="M12,32 Q52,14 96,18" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" pathLength="1" />
+                                                            <circle cx="12" cy="32" r="3" fill="var(--muted)" />
+                                                            <circle class="pb-fan-best" cx="96" cy="18" r="4" fill="var(--accent)" />
+                                                        </svg>
+                                                        <span class="pb-arrow">&rarr;</span>
+                                                        <span class="pb-pill pb-pill--ref">Q*(s,&nbsp;a)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="pb-step">
+                                                <div class="pb-rail"><span class="pb-dot"></span></div>
+                                                <div class="pb-body">
+                                                    <div class="pb-text">
+                                                        <h3 class="pb-name">Predict</h3>
+                                                        <p class="pb-desc">the method scores it</p>
+                                                    </div>
+                                                    <div class="pb-art">
+                                                        <span class="pb-bars" aria-hidden="true">
+                                                            <i style="--c: #0072b2; --w: 84%"></i><i style="--c: #009e73; --w: 60%"></i><i style="--c: #d55e00; --w: 46%"></i>
+                                                        </span>
+                                                        <span class="pb-arrow">&rarr;</span>
+                                                        <span class="pb-pill">k(s,&nbsp;a)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ol>
+                                    </div>
+
+                                    <!-- handoff: repeat across the whole dataset -->
+                                    <div class="px-join" aria-hidden="true">
+                                        <span class="px-join-label">for every<br />sampled point</span>
+                                        <span class="px-join-arrow">&rarr;</span>
+                                    </div>
+
+                                    <!-- align the two induced orderings -->
+                                    <div class="px-align">
+                                        <p class="px-act">Measure value-alignment</p>
+                                        <div class="pc-diagram">
+                                            <svg viewBox="0 0 520 264" aria-hidden="true">
+                                                <text class="pc-hd pc-hd--ref" x="130" y="22">ranked by Q*</text>
+                                                <text class="pc-hd" x="390" y="22">ranked by k</text>
+                                                <g class="pc-col pc-col--ref">
+                                                    <g class="pc-item"><rect x="70" y="46" width="120" height="36" rx="9" /><text x="130" y="68">a₂</text></g>
+                                                    <g class="pc-item"><rect x="70" y="100" width="120" height="36" rx="9" /><text x="130" y="122">a₄</text></g>
+                                                    <g class="pc-item"><rect x="70" y="154" width="120" height="36" rx="9" /><text x="130" y="176">a₁</text></g>
+                                                    <g class="pc-item"><rect x="70" y="208" width="120" height="36" rx="9" /><text x="130" y="230">a₃</text></g>
+                                                </g>
+                                                <g class="pc-links" fill="none" stroke-linecap="round" pathLength="1">
+                                                    <path class="pc-link pc-link--ok" d="M190,64 C250,64 270,64 330,64" />
+                                                    <path class="pc-link pc-link--x" d="M190,118 C260,118 260,172 330,172" />
+                                                    <path class="pc-link pc-link--x" d="M190,172 C260,172 260,118 330,118" />
+                                                    <path class="pc-link pc-link--ok" d="M190,226 C250,226 270,226 330,226" />
+                                                </g>
+                                                <g class="pc-col pc-col--method">
+                                                    <g class="pc-item"><rect x="330" y="46" width="120" height="36" rx="9" /><text x="390" y="68">a₂</text></g>
+                                                    <g class="pc-item"><rect x="330" y="100" width="120" height="36" rx="9" /><text x="390" y="122">a₁</text></g>
+                                                    <g class="pc-item"><rect x="330" y="154" width="120" height="36" rx="9" /><text x="390" y="176">a₄</text></g>
+                                                    <g class="pc-item"><rect x="330" y="208" width="120" height="36" rx="9" /><text x="390" y="230">a₃</text></g>
+                                                </g>
+                                                <g class="pc-converge" fill="none" stroke="var(--line-2)" stroke-width="1.4" pathLength="1">
+                                                    <path d="M450,64 C490,64 490,132 506,132" />
+                                                    <path d="M450,226 C490,226 490,132 506,132" />
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="pc-merge">
+                                        <span class="pc-rho">ρ</span>
+                                        <span class="pc-merge-l">Spearman<br />value-aligned</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <figcaption>From trajectories to a value-aligned score — one sampled pair, repeated across the dataset.</figcaption>
+                        </figure>
+                    </div>
+                </section>
+
+                <!-- QUICKSTART -->
+                <section class="band" id="quickstart">
+                    <div class="wrap">
+                        <h2>Quickstart</h2>
+                        <p class="lead measure">
+                            QVal is plug-and-play. The benchmark catalog ships pre-populated and its datasets come
+                            pre-collected, so evaluating the built-in methods on the built-in environments is four
+                            commands — and you never hand-write a config. One catalog is the single source of truth: the
+                            configs are generated from it, and the final step discovers and pairs every result on its
+                            own.
+                        </p>
+                        <div class="code-grid">
+                            <div class="codeblock">
+                                <div class="code-head">
+                                    <span>install</span><button class="copy" type="button">copy</button>
+                                </div>
+                                <pre><code data-lang="bash"># clone llenvs alongside this repo, then:
+uv pip install -e ".[all]"</code></pre>
+                            </div>
+                            <div class="codeblock">
+                                <div class="code-head">
+                                    <span>1 · generate configs from the catalog</span
+                                    ><button class="copy" type="button">copy</button>
+                                </div>
+                                <pre><code data-lang="bash">python scripts/generate_configs.py</code></pre>
+                            </div>
+                            <div class="codeblock">
+                                <div class="code-head">
+                                    <span>2 · predict — methods + Monte-Carlo ground truth</span
+                                    ><button class="copy" type="button">copy</button>
+                                </div>
+                                <pre><code data-lang="bash">python scripts/pipeline/predict.py --config \
+  catalogs/qval_benchmark/configs/prediction/frozen_lake/100pt_8x8_q35-27-or_text.yaml</code></pre>
+                            </div>
+                            <div class="codeblock">
+                                <div class="code-head">
+                                    <span>3 · evaluate — no arguments, auto-paired</span
+                                    ><button class="copy" type="button">copy</button>
+                                </div>
+                                <pre><code data-lang="bash"># discovers every prediction, pairs each
+# GT/method combo, writes the correlations
+python scripts/pipeline/evaluate.py</code></pre>
+                            </div>
+                        </div>
+                        <p class="small muted center-note">
+                            Models are served through the backends declared in
+                            <code>shared/configs/backends.yaml</code> — add an API key (e.g. OpenRouter) or point at a
+                            local vLLM server. For full runs, the wrappers in <code>scripts/slurm/</code> submit each
+                            step as a cluster job.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- EXTEND -->
+                <section class="band band-tint" id="extend">
+                    <div class="wrap">
+                        <h2>Extend the testbed</h2>
+                        <p class="lead measure">
+                            QVal is a tool first. Everything is anchored on one registry catalog
+                            (<code>catalogs/qval_benchmark/catalog.py</code>): add a method or an environment by
+                            appending a spec there and regenerating with <code>generate_configs.py</code> — it then runs
+                            on every applicable model, environment, and modality, with no other plumbing.
+                        </p>
+                        <div class="ext-grid">
+                            <div class="ext-card">
+                                <h3><span class="accent">+</span> A new method</h3>
+                                <p>
+                                    A method turns a <code>(state, action, next_state)</code> step into a scalar.
+                                    Subclass <code>DenseSignalMethod</code> and implement
+                                    <code>evaluate</code> (override <code>evaluate_batch</code> if it batches), register
+                                    its <code>type</code> in <code>method_factory.py</code>, then append a
+                                    <code>MethodSpec</code> to the catalog and regenerate.
+                                </p>
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>my_method.py</span><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="python">class MyMethod(DenseSignalMethod):
+    def evaluate(self, point: EvaluationPoint) -> float:
+        # point.state / action / next_state / history;
+        # self.context: task & reward text, signal_type …
+        return float(...)        # math.nan on failure</code></pre>
+                                </div>
+                            </div>
+                            <div class="ext-card">
+                                <h3><span class="accent">+</span> A new environment</h3>
+                                <p>
+                                    Environments come through <code>llenvs</code>, a unified, stateless interface (<code
+                                        >env.step(state, action)</code
+                                    >
+                                    is pure) that makes Monte-Carlo rollouts from arbitrary states possible. Write an
+                                    environment-context YAML, add an <code>EnvironmentSpec</code> to the catalog,
+                                    collect a dataset once, and regenerate.
+                                </p>
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>shared/configs/environments/my_env.yaml</span
+                                        ><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="yaml">adapter: my_env               # an llenvs adapter
+env_name: my_env:eval
+max_steps: 40
+reward_signal_name: task_completion
+task_description: >-
+  The agent acts in …
+evaluator_extractor:          # method text → number
+  type: numeric</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- /zone-tool -->
+
+            <!-- ===== ZONE: THE BENCHMARK ===== -->
+            <div class="zone zone-bench">
+                <div class="half-opener" id="study">
+                    <div class="wrap">
+                        <div class="measure">
+                            <p class="half-kicker">The study</p>
+                            <h2 class="half-title">Applying QVal at scale</h2>
+                            <p class="half-lead">
+                                We point the testbed at the field — 21 methods across seven families, six backbones, and
+                                four environments, over 1.2K experiments — and report what actually aligns with value.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENVIRONMENTS -->
+                <section class="band" id="environments">
+                    <div class="wrap">
+                        <h2>Four environments at release</h2>
+                        <p class="lead measure">
+                            Spanning text and vision, from closed-action navigation to open-ended shell use.
+                        </p>
+                        <div class="env-row">
+                            <figure class="env">
+                                <img src="shared/figures/env_frozen_lake.png" alt="FrozenLake grid world" />
+                                <figcaption><b>FrozenLake</b><span>goal-directed navigation</span></figcaption>
+                            </figure>
+                            <figure class="env">
+                                <img src="shared/figures/env_alfworld.png" alt="ALFWorld household scene" />
+                                <figcaption><b>ALFWorld</b><span>embodied reasoning</span></figcaption>
+                            </figure>
+                            <figure class="env">
+                                <img src="shared/figures/env_open_apps.png" alt="OpenApps application UI" />
+                                <figcaption><b>OpenApps</b><span>computer & application use</span></figcaption>
+                            </figure>
+                            <figure class="env">
+                                <img src="shared/figures/env_terminal_bench.png" alt="TerminalBench shell session" />
+                                <figcaption><b>TerminalBench</b><span>programming & agentic terminal</span></figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- RESULTS / LEADERBOARD -->
+                <section class="band band-tint" id="results">
+                    <div class="wrap">
+                        <h2>QVal-v1.0 — the benchmark</h2>
+                        <p class="lead measure">
+                            To demonstrate the testbed, we benchmark 21 dense supervision methods spanning seven
+                            families across six open-weight backbones (9B–122B) and four environments, in text and
+                            vision — over 1.2K evaluation experiments. Explore every method's value-alignment below.
+                        </p>
+                        <div class="stat-band">
+                            <div class="stat"><b>21</b><span>methods</span></div>
+                            <div class="stat"><b>7</b><span>families</span></div>
+                            <div class="stat"><b>6</b><span>backbones</span></div>
+                            <div class="stat"><b>4</b><span>environments</span></div>
+                            <div class="stat"><b>1.2K+</b><span>experiments</span></div>
+                            <div class="stat"><b>0</b><span>training runs</span></div>
+                        </div>
+                        <div id="board"></div>
+                    </div>
+                </section>
+
+                <!-- FINDINGS -->
+                <section class="prose" id="findings">
+                    <div class="wrap">
+                        <div class="measure">
+                            <h2>What we found</h2>
+                            <p>
+                                The interactive table above holds the full numbers; here is what they add up to. Every
+                                result below holds across model sizes, environments, and observation modalities.
+                            </p>
+
+                            <p class="find-group">Main results</p>
+                            <div class="finding">
+                                <h3>Simple prompting is the strongest baseline.</h3>
+                                <p>
+                                    Ranking and direct value prediction achieve the highest value-alignment in every
+                                    environment and backbone, consistently out-aligning more recent and more specialized
+                                    dense-supervision methods. Direct value elicitation should be treated as a required
+                                    baseline, not an afterthought.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Performance clusters by family.</h3>
+                                <p>
+                                    Correlations fall into tight bands within each of the seven families, which supports
+                                    the taxonomy: the family a method belongs to predicts its behavior better than its
+                                    individual design tricks. Code methods are the exception, with by far the widest
+                                    spread — their effectiveness hinges on how readily a state and action space can be
+                                    captured in code.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Added complexity rarely helps.</h3>
+                                <p>
+                                    Within a family, elaborate variants don't reliably beat the simplest one.
+                                    Multi-estimate and batched/sequential direct prompting don't clearly beat
+                                    <code>direct-single</code>; privileged self-distillation (<code>sdpo-gt</code>)
+                                    doesn't improve on plain <code>sdpo</code>; averaging generated functions
+                                    (<code>codegen-avg</code>) lifts the mean over <code>codegen</code> only slightly
+                                    while leaving the variance. QVal exposes this without running a single training job.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Difficulty doesn't predict alignment.</h3>
+                                <p>
+                                    From closed-action FrozenLake to open-ended TerminalBench, value-alignment does not
+                                    fall monotonically with task difficulty. Direct prompting stays positive everywhere;
+                                    code and ranking weaken in open-ended settings — code even turns negative on
+                                    TerminalBench — while self-distillation does the opposite, growing stronger where
+                                    richer intermediate feedback is available. Alignment depends on a method's
+                                    interaction with each environment, not on difficulty alone.
+                                </p>
+                            </div>
+
+                            <p class="find-group">Robustness</p>
+                            <div class="finding">
+                                <h3>Text beats vision.</h3>
+                                <p>
+                                    On environments that provide both, methods recover reference values more reliably
+                                    from text than from images. Parsing pixels is harder, and the extra visual context
+                                    does not compensate for the model–method pairs we examine — though this reflects the
+                                    abstraction available to each modality, not an intrinsic inferiority of visual
+                                    feedback.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Rankings survive the choice of target.</h3>
+                                <p>
+                                    Relabelling with state-values <code>V(s)</code> instead of Q-values largely
+                                    preserves the method ordering, so the conclusions don't hinge on a single target.
+                                    Absolute scores do shift — code and pre-trained methods align better with
+                                    state-values, direct prompting with Q-values — reflecting how each method consumes
+                                    its input.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Labels are robust to the reference backbone.</h3>
+                                <p>
+                                    On TerminalBench, reference values estimated by two independent frontier models
+                                    (GPT-5.5 and Claude Opus 4.7) yield closely matching method correlations. The labels
+                                    capture a stable notion of downstream progress rather than one model's
+                                    idiosyncrasies.
+                                </p>
+                            </div>
+
+                            <p class="find-group">What it means</p>
+                            <div class="finding">
+                                <h3>Signal quality is conflated with training recipes.</h3>
+                                <p>
+                                    Because plain prompting is so competitive when measured directly, much of the
+                                    reported progress of complex methods may stem from changes in data, compute,
+                                    exploration, prompting, or optimization rather than from a better dense signal.
+                                    Measuring alignment first separates the two.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>A low score rules a method out; a high score is a green light, not a guarantee.</h3>
+                                <p>
+                                    QVal measures signal quality on its own and leaves integration — normalization
+                                    against other signals, the optimizer, interactions with the environment — as a
+                                    separate downstream question. It is a cheap diagnostic that filters candidate
+                                    signals before expensive training runs, not a replacement for them.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <!-- /zone-bench -->
+
+            <!-- AUTHORS / CITE -->
+            <section class="prose" id="cite">
+                <div class="wrap">
+                    <div class="measure">
+                        <h2>Authors &amp; citation</h2>
+                        <p class="authors-line">
+                            <b>Sergio Hernández-Gutiérrez</b><sup>1</sup>, <b>Matteo Merler</b><sup>2,*</sup>,
+                            <b>Ilze Amanda Auzina</b><sup>1,*</sup>, <b>Joschka Strüber</b><sup>1</sup>,
+                            <b>Ameya Prabhu</b><sup>1,†</sup>, <b>Matthias Bethge</b><sup>1,†</sup>
+                        </p>
+                        <p class="muted small">
+                            <sup>1</sup> Tübingen AI Center, University of Tübingen &nbsp;·&nbsp;
+                            <sup>2</sup> Fondazione Bruno Kessler &nbsp;·&nbsp; * equal contribution &nbsp; † equal
+                            advising <br />Correspondence: sergio.hernandez@bethgelab.org
+                        </p>
+                        <div class="bibwrap">
+                            <div class="bib-head">
+                                <span>BibTeX</span><button class="copy" id="cite-copy" type="button">Copy</button>
+                            </div>
+                            <pre><code id="bibtex">Loading…</code></pre>
+                        </div>
+                        <div class="cite-links">
+                            <a class="btn" href="paper.pdf">Paper PDF</a>
+                            <a
+                                class="btn"
+                                href="https://github.com/bethgelab/lit-benchmark"
+                                target="_blank"
+                                rel="noopener"
+                                >Code</a
+                            >
+                            <a
+                                class="btn"
+                                href="https://huggingface.co/datasets/bethgelab/lit-benchmark/"
+                                target="_blank"
+                                rel="noopener"
+                                >Datasets</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="foot">
+            <div class="wrap">QVal · Tübingen AI Center · training-free evaluation of dense supervision signals</div>
+        </footer>
+
+        <script type="module" src="app.js">
+</script>
+    </body>
+</html>
