@@ -183,7 +183,7 @@ function runSession(i) {
 const motionReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
-/* ---- hero motif: scattered points settling onto a value-alignment diagonal ---- */
+/* ---- hero motif: scattered points settling onto a Q-alignment diagonal ---- */
 function setupHeroMotif() {
     const canvas = document.getElementById("hero-canvas");
     const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;

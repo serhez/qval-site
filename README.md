@@ -16,7 +16,7 @@ website/
     figures/        web-ready figures (PNG)
 ```
 
-Its section order follows the paper's storyline: problem → value-alignment →
+Its section order follows the paper's storyline: problem → Q-alignment →
 how it works → quickstart → extend → environments → leaderboard → findings → cite,
 split into two zones (the testbed tool, then the benchmark study).
 

@@ -6,7 +6,7 @@
         <title>QVal — Evaluate dense supervision signals before you train</title>
         <meta
             name="description"
-            content="QVal is a training-free testbed that measures whether a dense supervision signal is value-aligned with reference Q-values — separating signal quality from training engineering. Install it, see how it works, and extend it to your own environments."
+            content="QVal is a training-free testbed that measures whether a dense supervision signal aligns with reference Q-values — separating signal quality from training engineering. Install it, see how it works, and extend it to your own environments."
         />
         <link
             rel="icon"
@@ -45,7 +45,7 @@
                     <p class="dek">
                         Long-horizon LLM agents take hundreds of actions, yet an outcome-only reward tells them nothing
                         about the steps along the way. <strong>QVal</strong> measures whether a dense supervision signal
-                        is <em>value-aligned</em> — whether it orders actions the way reference Q-values do — so signal
+                        is <em>Q-aligned</em> — whether it orders actions the way reference Q-values do — so signal
                         quality can be judged on common ground, cheaply, and apart from the engineering of any training
                         pipeline.
                     </p>
@@ -94,7 +94,7 @@
                             <p class="half-kicker">The tool</p>
                             <h2 class="half-title">A testbed for the post-training community</h2>
                             <p class="half-lead">
-                                What QVal measures, why value-alignment is the right target, and how to install, run,
+                                What QVal measures, why Q-alignment is the right target, and how to install, run,
                                 and extend it on your own methods and environments.
                             </p>
                         </div>
@@ -132,7 +132,7 @@
                 <section class="band" id="idea">
                     <div class="wrap">
                         <div class="idea-head">
-                            <h2>The idea: value-alignment</h2>
+                            <h2>The idea: Q-alignment</h2>
                             <p class="lead">
                                 A dense supervision method assigns a scalar score <code>k(s, a)</code> to each action.
                                 QVal measures one property: whether that score is a strictly increasing function of the
@@ -187,7 +187,7 @@
                             </li>
                         </ol>
                         <figure class="figure-hero">
-                            <div class="pipe" aria-label="QVal pipeline: from one sampled state–action pair to a value-alignment score">
+                            <div class="pipe" aria-label="QVal pipeline: from one sampled state–action pair to a Q-alignment score">
                                 <div class="px">
                                     <!-- build the two scores for one sampled point -->
                                     <div class="px-make">
@@ -257,7 +257,7 @@
 
                                     <!-- align the two induced orderings -->
                                     <div class="px-align">
-                                        <p class="px-act">Measure value-alignment</p>
+                                        <p class="px-act">Measure Q-alignment</p>
                                         <div class="pc-diagram">
                                             <svg viewBox="0 0 520 264" aria-hidden="true">
                                                 <text class="pc-hd pc-hd--ref" x="130" y="22">ranked by Q*</text>
@@ -290,11 +290,11 @@
 
                                     <div class="pc-merge">
                                         <span class="pc-rho">ρ</span>
-                                        <span class="pc-merge-l">Spearman<br />value-aligned</span>
+                                        <span class="pc-merge-l">Spearman<br />Q-aligned</span>
                                     </div>
                                 </div>
                             </div>
-                            <figcaption>From trajectories to a value-aligned score — one sampled pair, repeated across the dataset.</figcaption>
+                            <figcaption>From trajectories to a Q-aligned score — one sampled pair, repeated across the dataset.</figcaption>
                         </figure>
                     </div>
                 </section>
@@ -464,7 +464,7 @@ evaluator_extractor:          # method text → number
                         <p class="lead measure">
                             To demonstrate the testbed, we benchmark 21 dense supervision methods spanning seven
                             families across six open-weight backbones (9B–122B) and four environments, in text and
-                            vision — over 1.2K evaluation experiments. Explore every method's value-alignment below.
+                            vision — over 1.2K evaluation experiments. Explore every method's Q-alignment below.
                         </p>
                         <div class="stat-band">
                             <div class="stat"><b>21</b><span>methods</span></div>
@@ -492,7 +492,7 @@ evaluator_extractor:          # method text → number
                             <div class="finding">
                                 <h3>Simple prompting is the strongest baseline.</h3>
                                 <p>
-                                    Ranking and direct value prediction achieve the highest value-alignment in every
+                                    Ranking and direct value prediction achieve the highest Q-alignment in every
                                     environment and backbone, consistently out-aligning more recent and more specialized
                                     dense-supervision methods. Direct value elicitation should be treated as a required
                                     baseline, not an afterthought.
@@ -522,7 +522,7 @@ evaluator_extractor:          # method text → number
                             <div class="finding">
                                 <h3>Difficulty doesn't predict alignment.</h3>
                                 <p>
-                                    From closed-action FrozenLake to open-ended TerminalBench, value-alignment does not
+                                    From closed-action FrozenLake to open-ended TerminalBench, Q-alignment does not
                                     fall monotonically with task difficulty. Direct prompting stays positive everywhere;
                                     code and ranking weaken in open-ended settings — code even turns negative on
                                     TerminalBench — while self-distillation does the opposite, growing stronger where

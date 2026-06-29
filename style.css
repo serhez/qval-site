@@ -48,7 +48,7 @@ sup{font-size:.62em}
 
 /* hero — lighter "masthead" tone, set apart from the tool zone below */
 .hero{position:relative;overflow:hidden;padding:84px 0 72px;background:var(--paper-2);border-bottom:1px solid var(--line-2)}
-/* slide-1 motif: scattered points settling onto a value-alignment diagonal */
+/* slide-1 motif: scattered points settling onto a Q-alignment diagonal */
 .hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.8;pointer-events:none}
 .hero > .wrap{position:relative;z-index:1}
 .hero-inner{max-width:840px;margin:0 auto;text-align:center}
