@@ -15,7 +15,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-[id]{scroll-margin-top:80px} /* keep anchored targets clear of the sticky nav */
+[id]{scroll-margin-top:24px} /* small breathing gap above anchored targets */
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
   font-size:18px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
@@ -31,20 +31,6 @@ sup{font-size:.62em}
 .skip{position:absolute;left:-999px}
 .skip:focus{left:12px;top:12px;background:var(--accent);color:#fff;padding:8px 14px;border-radius:8px;z-index:99}
 
-/* nav */
-.nav{position:sticky;top:0;z-index:40;background:rgba(247,243,234,.86);backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--line)}
-.nav-inner{display:flex;align-items:center;height:64px;gap:24px}
-.brand{font-family:var(--serif);font-weight:700;font-size:1.5rem;letter-spacing:.01em;color:var(--ink);text-decoration:none}
-.nav-links{display:flex;gap:24px;margin-left:auto;font-family:var(--sans);font-size:.9rem}
-.nav-links a{color:var(--ink-2);text-decoration:none}
-.nav-links a:hover{color:var(--accent)}
-.nav-cta{display:flex;align-items:center;gap:10px}
-.ghost{font-family:var(--sans);font-size:.85rem;font-weight:600;color:var(--ink-2);text-decoration:none;
-  border:1px solid var(--line-2);border-radius:999px;padding:6px 14px;background:var(--paper-2)}
-.ghost:hover{border-color:var(--accent);color:var(--accent)}
-.burger{display:none;background:none;border:1px solid var(--line-2);border-radius:8px;font-size:1.2rem;
-  padding:2px 10px;cursor:pointer;color:var(--ink)}
 
 /* hero — lighter "masthead" tone, set apart from the tool zone below */
 .hero{position:relative;overflow:hidden;padding:84px 0 72px;background:var(--paper-2);border-bottom:1px solid var(--line-2)}
@@ -263,10 +249,6 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
 /* responsive */
 @media(max-width:860px){
   body{font-size:17px}
-  .nav-links{display:none}
-  .nav-links.open{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;
-    background:var(--paper-2);border-bottom:1px solid var(--line);padding:14px 28px;gap:14px}
-  .burger{display:block}
   .code-grid,.ext-grid,.env-row{grid-template-columns:1fr}
   .env img{height:200px}
   .stat{min-width:30%}

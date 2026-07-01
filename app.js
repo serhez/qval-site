@@ -101,20 +101,6 @@ document.addEventListener("click", (e) => {
     });
 });
 
-/* ---- mobile nav ---- */
-const burger = document.querySelector(".burger");
-const links = document.querySelector(".nav-links");
-burger?.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
-    burger.setAttribute("aria-expanded", String(open));
-});
-links?.addEventListener("click", (e) => {
-    if (e.target.tagName === "A") {
-        links.classList.remove("open");
-        burger.setAttribute("aria-expanded", "false");
-    }
-});
-
 /* ---- hero terminal typewriter ---- */
 const SESSION = [
     { c: "c-prompt", t: "❯ " },
@@ -132,7 +118,7 @@ const SESSION = [
     { c: "c-num", t: "0.34\n", print: 60 },
     { c: "c-cmd", t: "  my_method      ", print: 160 },
     { c: "c-num", t: "0.18\n", print: 60 },
-    { c: "c-ok", t: "  ✓ done — no training run required\n", print: 420 },
+    { c: "c-ok", t: "  ✓ done: no training run required\n", print: 420 },
 ];
 
 const out = document.getElementById("typed");

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>QVal — Evaluate dense supervision signals before you train</title>
+        <title>QVal: Evaluate dense supervision signals before you train</title>
         <meta
             name="description"
             content="QVal is a training-free testbed that measures whether a dense supervision signal aligns with reference Q-values, separating signal quality from training engineering."
@@ -16,22 +16,6 @@
     </head>
     <body>
         <a class="skip" href="#main">Skip to content</a>
-
-        <header class="nav" id="top">
-            <div class="wrap nav-inner">
-                <a class="brand" href="#top">QVal</a>
-                <nav class="nav-links" aria-label="Primary">
-                    <a href="#tool">The tool</a>
-                    <a href="#study">The study</a>
-                    <a href="#cite">Cite</a>
-                </nav>
-                <div class="nav-cta">
-                    <a class="ghost" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener">Paper</a>
-                    <a class="ghost" href="https://github.com/bethgelab/qval" target="_blank" rel="noopener">GitHub</a>
-                    <button class="burger" aria-label="Menu" aria-expanded="false">≡</button>
-                </div>
-            </div>
-        </header>
 
         <main id="main">
             <!-- HERO -->
@@ -76,7 +60,7 @@
                     <div class="terminal" aria-hidden="true">
                         <div class="term-bar">
                             <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span
-                            ><span class="term-title">qval — evaluate a candidate signal</span>
+                            ><span class="term-title">qval: evaluate a candidate signal</span>
                         </div>
                         <pre class="term-body"><code id="typed"></code><span class="caret"></span></pre>
                     </div>
@@ -107,8 +91,8 @@
                             <div class="measure">
                                 <h2>The bottleneck</h2>
                                 <p>
-                                    Dense supervision methods all try to score intermediate steps. They are evaluated
-                                    them by downstream post-training performance.
+                                    Dense supervision methods all try to score intermediate steps. But they are
+                                    evaluated by their downstream post-training performance.
                                 </p>
                                 <p>
                                     That is expensive, it conflates the quality of the signal with the engineering
@@ -526,7 +510,7 @@ evaluator_extractor:          # method text → number
                 <!-- RESULTS / LEADERBOARD -->
                 <section class="band band-tint" id="results">
                     <div class="wrap">
-                        <h2>QVal-v1.0 — the benchmark</h2>
+                        <h2>QVal-v1.0: the benchmark</h2>
                         <p class="lead measure">Explore every method's Q-alignment below.</p>
                         <div class="stat-band">
                             <div class="stat"><b>21</b><span>methods</span></div>
