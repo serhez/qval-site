@@ -112,7 +112,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
 .zone .band,.zone .prose{background:transparent}
 /* slide-2 motif: sprawling trajectory tree behind "The tool" + "The bottleneck" */
 .tool-intro{position:relative}
-.tool-intro > canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.tool-intro > canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.6}
 .tool-intro > .half-opener,.tool-intro > .prose{position:relative;z-index:1}
 .half-opener{padding:78px 0 0}
 .half-opener + section{padding-top:42px;border-top:0}

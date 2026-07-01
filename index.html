@@ -72,10 +72,6 @@
                             <div class="measure">
                                 <p class="half-kicker">The tool</p>
                                 <h2 class="half-title">A testbed for the post-training community</h2>
-                                <p class="half-lead">
-                                    What QVal measures, why Q-alignment is the right target, and how to install, run,
-                                    and extend it on your own methods and environments.
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -84,7 +80,6 @@
                     <section class="prose" id="problem">
                         <div class="wrap">
                             <div class="measure">
-                                <h2>The bottleneck</h2>
                                 <p>
                                     Dense supervision methods all try to score intermediate steps. But they are
                                     evaluated by their downstream post-training performance.
@@ -98,49 +93,40 @@
                                     “Can we evaluate dense supervision signals in isolation, before expensive
                                     post-training runs?”
                                 </blockquote>
+                                <p>
+                                    A dense supervision method assigns a scalar score <code>k(s, a)</code> to each
+                                    action. QVal measures one property: whether that score ranks decisions the way their
+                                    eventual return does.
+                                </p>
+                                <div
+                                    class="eq"
+                                    role="math"
+                                    aria-label="k of s, a equals phi of Q superscript pi of s, a, where phi is strictly increasing"
+                                >
+                                    <span class="eq-body"
+                                        ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>φ</i>(<i>Q</i
+                                        ><sup><i>π</i></sup
+                                        >(<i>s</i>,&thinsp;<i>a</i>))</span
+                                    >
+                                    <span class="eq-where">where <i>φ</i> is strictly increasing</span>
+                                </div>
+                                <p>
+                                    The reference Q-value is the expected return of continuing from <code>(s, a)</code>
+                                    under a strong reference policy (e.g., an optimal policy or a frontier model).
+                                    Predictions live on incompatible scales, so we compare the <em>ordering</em> they
+                                    induce, reporting <strong>Spearman&nbsp;ρ</strong> against the reference labels.
+                                    Same inputs, same targets, fixed backbones.
+                                </p>
                             </div>
                         </div>
                     </section>
                 </div>
                 <!-- /tool-intro -->
 
-                <!-- THE IDEA -->
-                <section class="band" id="idea">
-                    <div class="wrap">
-                        <div class="idea-head">
-                            <h2>The idea: Q-alignment</h2>
-                            <p class="lead">
-                                A dense supervision method assigns a scalar score <code>k(s, a)</code> to each action.
-                                QVal measures one property: whether that score ranks decisions the way their eventual
-                                return does.
-                            </p>
-                            <div
-                                class="eq"
-                                role="math"
-                                aria-label="k of s, a equals phi of Q superscript pi of s, a, where phi is strictly increasing"
-                            >
-                                <span class="eq-body"
-                                    ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>φ</i>(<i>Q</i
-                                    ><sup><i>π</i></sup
-                                    >(<i>s</i>,&thinsp;<i>a</i>))</span
-                                >
-                                <span class="eq-where">where <i>φ</i> is strictly increasing</span>
-                            </div>
-                            <p class="lead">
-                                The reference Q-value is the expected return of continuing from <code>(s, a)</code>
-                                under a strong reference policy (e.g., an optimal policy or a frontier model).
-                                Predictions live on incompatible scales, so we compare the
-                                <em>ordering</em> they induce, reporting <strong>Spearman&nbsp;ρ</strong> against the
-                                reference labels. Same inputs, same targets, fixed backbones.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- HOW IT WORKS -->
                 <section class="band band-tint" id="how">
                     <div class="wrap">
-                        <h2>How the testbed works</h2>
+                        <h2>How it works</h2>
                         <p class="lead measure">
                             The same five-stage recipe runs for every environment. You can skip the first three and use
                             our pre-collected datasets.
@@ -400,7 +386,7 @@ python scripts/pipeline/evaluate.py</code></pre>
                 <!-- EXTEND -->
                 <section class="band band-tint" id="extend">
                     <div class="wrap">
-                        <h2>Extend the testbed</h2>
+                        <h2>Extend it</h2>
                         <p class="lead measure">
                             QVal is made for your experiments. You can define your own registry catalog
                             (<code>catalogs/&lt;your_experiment&gt;/catalog.py</code>): add your methods or environments
