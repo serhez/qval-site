@@ -92,8 +92,8 @@ h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.6rem,6vw,4.4rem);l
 .prose p{margin:0 0 20px;color:var(--ink-2)}
 .prose p strong{color:var(--ink)}
 .sec-sub{max-width:64ch;color:var(--ink-2)}
-blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-height:1.4;color:var(--ink);
-  border-left:3px solid var(--accent);margin:36px 0 0;padding:6px 0 6px 26px}
+blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-height:1.4;color:var(--ink);
+  border-left:3px solid var(--accent);margin:36px 0;padding:6px 0 6px 26px}
 .flow{list-style:none;counter-reset:f;padding:0;margin:0 0 26px}
 .flow li{counter-increment:f;position:relative;padding:14px 0 14px 56px;border-bottom:1px solid var(--line);color:var(--ink-2)}
 .flow li:last-child{border-bottom:0}
@@ -129,12 +129,14 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
 .lead{font-size:1.12rem;color:var(--ink-2);margin:0 0 18px}
 /* display equation — LaTeX-style math typography (serif, italic variables) */
 .eq{background:var(--card);border:1px solid var(--line-2);border-radius:10px;
-  padding:26px 22px;margin:26px 0;text-align:center;font-family:var(--serif)}
-.eq-body{font-size:1.7rem;line-height:1.2;color:var(--ink)}
+  padding:32px 28px;margin:30px 0;text-align:center;font-family:var(--serif)}
+.eq-label{display:block;font-family:var(--sans);text-transform:uppercase;letter-spacing:.16em;
+  font-size:.72rem;font-weight:700;color:var(--accent);margin-bottom:20px}
+.eq-body{font-size:2rem;line-height:1.35;color:var(--ink);white-space:nowrap}
 .eq i{font-style:italic}
-.eq sup{font-size:.6em;font-style:italic;vertical-align:.55em}
-.eq-op{font-style:normal;margin:0 .4em;color:var(--ink-2)}
-.eq-where{display:block;margin-top:14px;font-size:1.02rem;color:var(--muted)}
+.eq sup{font-size:.6em;font-style:italic;vertical-align:.55em;margin-left:.02em}
+.eq-op{font-style:normal;margin:0 .55em;color:var(--ink-2)}
+.eq-where{display:block;margin-top:20px;font-size:1.02rem;color:var(--muted)}
 .figure-hero{margin:30px 0 0}
 .figure-hero img{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line-2);
   border-radius:12px;padding:16px}
@@ -260,6 +262,8 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
   .code-grid,.ext-grid,.env-row{grid-template-columns:1fr}
   .env img{height:200px}
   .stat{min-width:30%}
+  .eq{padding:26px 16px}
+  .eq-body{font-size:1.55rem}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}.caret{animation:none}}
 
