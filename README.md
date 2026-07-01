@@ -38,7 +38,7 @@ blocks over `file://`.
 
 Upload the whole `website/` directory to any static host (GitHub Pages, Netlify,
 Surge, …). The site is at the deploy root — no subpath. All asset paths are
-relative, so it works from any base URL.
+relative, so it works from any base URL. Live at https://q-val.com.
 
 ## Regenerate the leaderboard data
 
@@ -56,8 +56,5 @@ the "State-value" target rather than "Q-value".
 
 ## Still to fill in
 
-- The "Paper" links point at `paper.pdf` (site root). Drop the compiled PDF into
-  `website/paper.pdf` before sharing, or repoint the links to the arXiv URL once live.
 - Author homepage links (names render unlinked).
 - A QVal logo/mark (currently a typographic "Q" favicon + wordmark).
-- Confirm the deploy target/slug (`bethgelab.github.io/lit-benchmark/`).
