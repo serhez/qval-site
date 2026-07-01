@@ -42,7 +42,7 @@ sup{font-size:.62em}
   color:var(--accent);margin:0 0 24px}
 h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.04;
   letter-spacing:-.01em;margin:0 0 26px}
-.dek{font-size:1.22rem;color:var(--ink-2);max-width:54ch;margin:0 auto 32px}
+.dek{font-size:1.22rem;color:var(--ink-2);max-width:52ch;margin:0 auto 32px}
 .dek strong{color:var(--ink)}
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:26px}
 .btn{display:inline-flex;align-items:center;gap:.5em;font-family:var(--sans);font-size:.95rem;font-weight:600;
@@ -52,9 +52,11 @@ h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.6rem,6vw,4.4rem);l
 .btn-fill{background:var(--accent);color:#fff;border-color:var(--accent)}
 .btn-fill:hover{background:var(--accent-2);color:#fff}
 .btn svg{height:1.05em;width:auto;fill:currentColor;flex:none}
+.ico-badge{display:inline-flex;align-items:center;justify-content:center;background:#fff;border-radius:5px;padding:2px 3px;flex:none}
+.btn .ico-badge svg{height:.85em;fill:var(--accent)}
 .byline{font-family:var(--sans);font-size:.9rem;color:var(--ink-2);line-height:1.6;margin:0}
-.authors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 28px;max-width:620px;
-  margin:0 auto 10px;font-weight:600;color:var(--ink)}
+.authors{display:grid;grid-template-columns:repeat(3,auto);justify-content:center;gap:4px 28px;margin:0 auto 8px}
+.authors span{white-space:nowrap}
 .affil{margin:0;font-size:.82rem}
 
 /* hero terminal */
@@ -254,7 +256,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
 /* responsive */
 @media(max-width:860px){
   body{font-size:17px}
-  .authors{grid-template-columns:repeat(2,1fr);max-width:440px}
+  .authors{grid-template-columns:repeat(2,auto)}
   .code-grid,.ext-grid,.env-row{grid-template-columns:1fr}
   .env img{height:200px}
   .stat{min-width:30%}

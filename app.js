@@ -107,7 +107,6 @@ const SESSION = [
     { c: "c-cmd", t: "python scripts/pipeline/predict.py", type: true },
     { t: "\n" },
     { c: "c-dim", t: "  scoring 94 state–action pairs with my_method …\n", print: 380 },
-    { c: "c-dim", t: "  reference rollouts (Max-Value Monte Carlo) …\n", print: 520 },
     { c: "c-prompt", t: "❯ " },
     { c: "c-cmd", t: "python scripts/pipeline/evaluate.py", type: true },
     { t: "\n" },
