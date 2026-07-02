@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>QVal — Evaluate dense supervision signals before you train</title>
+        <title>QVal: Evaluate dense supervision signals before you train</title>
         <meta
             name="description"
             content="QVal is a training-free testbed that measures whether a dense supervision signal aligns with reference Q-values, separating signal quality from training engineering."
@@ -17,28 +17,12 @@
     <body>
         <a class="skip" href="#main">Skip to content</a>
 
-        <header class="nav" id="top">
-            <div class="wrap nav-inner">
-                <a class="brand" href="#top">QVal</a>
-                <nav class="nav-links" aria-label="Primary">
-                    <a href="#tool">The tool</a>
-                    <a href="#study">The study</a>
-                    <a href="#cite">Cite</a>
-                </nav>
-                <div class="nav-cta">
-                    <a class="ghost" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener">Paper</a>
-                    <a class="ghost" href="https://github.com/bethgelab/qval" target="_blank" rel="noopener">GitHub</a>
-                    <button class="burger" aria-label="Menu" aria-expanded="false">≡</button>
-                </div>
-            </div>
-        </header>
-
         <main id="main">
             <!-- HERO -->
             <section class="hero">
                 <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
                 <div class="wrap hero-inner">
-                    <p class="kicker">A training-free testbed for dense supervision</p>
+                    <p class="kicker">QVal: Cheaply Evaluating Dense Supervision Signals for Long-Horizon LLM Agents</p>
                     <h1>Evaluate a reward signal<br /><span class="em">before</span> you train.</h1>
                     <p class="dek">
                         Long-horizon LLM agents take hundreds of actions, yet an outcome-only reward tells them nothing
@@ -47,36 +31,35 @@
                         the engineering of any training pipeline.
                     </p>
                     <div class="hero-actions">
-                        <a class="btn btn-fill" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener"
-                            >Read the paper</a
-                        >
-                        <a class="btn" href="#quickstart">Get started</a>
-                        <a class="btn" href="https://github.com/bethgelab/qval" target="_blank" rel="noopener">Code</a>
-                        <a
-                            class="btn"
-                            href="https://huggingface.co/datasets/bethgelab/qval/"
-                            target="_blank"
-                            rel="noopener"
-                            >Datasets</a
-                        >
+                        <a class="btn btn-fill" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener"><span class="ico-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8423 0a1.0037 1.0037 0 0 0-.922.6078c-.1536.3687-.0438.6275.2938 1.1113l6.9185 8.3597-1.0223 1.1058a1.0393 1.0393 0 0 0 .003 1.4229l1.2292 1.3135-5.4391 6.4444c-.2803.299-.4538.823-.2971 1.1986a1.0253 1.0253 0 0 0 .9585.635.9133.9133 0 0 0 .6891-.3405l5.783-6.126 7.4902 8.0051a.8527.8527 0 0 0 .6835.2597.9575.9575 0 0 0 .8777-.6138c.1577-.377-.017-.7502-.306-1.1407l-7.0518-8.3418 1.0632-1.13a.9626.9626 0 0 0 .0089-1.3165L4.6336.4639s-.3733-.4535-.768-.463zm0 .272h.0166c.2179.0052.4874.2715.5644.3639l.005.006.0052.0055 10.169 10.9905a.6915.6915 0 0 1-.0072.945l-1.0666 1.133-1.4982-1.7724-8.5994-10.39c-.3286-.472-.352-.6183-.2592-.841a.7307.7307 0 0 1 .6704-.4401Zm14.341 1.5701a.877.877 0 0 0-.6554.2418l-5.6962 6.1584 1.6944 1.8319 5.3089-6.5138c.3251-.4335.479-.6603.3247-1.0292a1.1205 1.1205 0 0 0-.9763-.689zm-7.6557 12.2823 1.3186 1.4135-5.7864 6.1295a.6494.6494 0 0 1-.4959.26.7516.7516 0 0 1-.706-.4669c-.1119-.2682.0359-.6864.2442-.9083l.0051-.0055.0047-.0055z"/></svg></span>Read the paper</a>
+                        <a class="btn" href="https://github.com/bethgelab/qval" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>Code</a>
+                        <a class="btn" href="https://huggingface.co/datasets/bethgelab/qval/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.4446 11.5059c0 1.1021.1673 2.1585.4847 3.1563-.0378-.0028-.0691-.0058-.1058-.0058-.4209 0-.8015.16-1.0704.4512-.3454.3737-.4984.8335-.4316 1.293a1.576 1.576 0 0 0 .2148.5978c-.2319.1864-.4018.4456-.4844.7578-.0646.2448-.131.7543.2149 1.2794a1.4552 1.4552 0 0 0-.0625.1055c-.208.3923-.2207.8372-.0371 1.25.2783.6258.9696 1.1175 2.3126 1.6467.8356.3292 1.5988.5411 1.6056.543 1.1046.2847 2.104.4277 2.969.4277 1.4173 0 2.4754-.3849 3.1525-1.1446 1.538.2651 2.791.1403 3.592.006.6773.7555 1.7332 1.1387 3.1467 1.1387.8649 0 1.8643-.143 2.969-.4278.0068-.0019.77-.2138 1.6056-.543 1.343-.5292 2.0343-1.0208 2.3126-1.6466.1836-.4129.171-.8577-.037-1.25a1.4685 1.4685 0 0 0-.0626-.1056c.346-.525.2795-1.0346.2149-1.2793-.0826-.3122-.2525-.5714-.4844-.7579.11-.1816.1831-.3788.2148-.5977.0669-.4595-.0862-.9193-.4316-1.293-.2688-.2913-.6495-.4513-1.0704-.4513-.0209 0-.0376.0008-.0588.0018.3162-.9966.4846-2.0518.4846-3.1523 0-5.807-4.7362-10.5144-10.5789-10.5144-5.8426 0-10.5788 4.7073-10.5788 10.5144Zm10.5788-9.4831c5.2727 0 9.5476 4.246 9.5476 9.483a9.4201 9.4201 0 0 1-.2696 2.2365c-.0039-.0047-.0079-.011-.0117-.0156-.274-.3255-.6679-.5059-1.1075-.5059-.352 0-.714.1155-1.0763.3438-.2403.1517-.5058.422-.7793.7598-.2534-.3492-.608-.5832-1.0137-.6465a1.5174 1.5174 0 0 0-.2344-.0176c-.9263 0-1.4828.7993-1.6935 1.5177-.1046.2426-.6065 1.3482-1.3614 2.0978-1.1681 1.1601-1.4458 2.3534-.8396 3.6382-.843.1029-1.5836.0927-2.365-.006.5906-1.212.3626-2.4388-.8426-3.6322-.755-.7496-1.2568-1.8552-1.3614-2.0978-.2107-.7184-.7673-1.5177-1.6935-1.5177-.078 0-.1568.0054-.2344.0176-.4057.0633-.7604.2973-1.0137.6465-.2735-.3379-.539-.6081-.7794-.7598-.3622-.2283-.7243-.3438-1.0762-.3438-.4266 0-.8094.171-1.0821.4786a9.4208 9.4208 0 0 1-.2598-2.1936c0-5.237 4.2749-9.483 9.5475-9.483zM8.6443 7.0036c-.4838.0043-.9503.2667-1.1934.7227-.3536.6633-.1006 1.4873.5645 1.84.351.1862.4883-.5261.836-.6485.3107-.1095.841.399 1.0078.086.3536-.6634.1025-1.4874-.5625-1.84a1.3659 1.3659 0 0 0-.6524-.1602Zm6.8403 0c-.2199-.002-.4426.05-.6504.1602-.665.3526-.9181 1.1766-.5645 1.84.1669.313.6971-.1955 1.0079-.086.3476.1224.4867.8347.838.6485.6649-.3527.916-1.1767.5624-1.84-.243-.456-.7096-.7184-1.1934-.7227Zm-9.7565 1.418a.8768.8768 0 0 0-.877.877c0 .4846.3925.877.877.877a.8768.8768 0 0 0 .877-.877.8768.8768 0 0 0-.877-.877zm12.6434 0c-.4845 0-.879.3925-.879.877 0 .4846.3945.877.879.877a.8768.8768 0 0 0 .877-.877.8768.8768 0 0 0-.877-.877zM8.7927 11.459c-.179-.003-.2793.1107-.2793.416 0 .8097.3874 2.125 1.4279 2.924.207-.7123 1.3453-1.2832 1.5079-1.2012.2315.1167.2191.4417.6074.7266.3884-.285.374-.6098.6056-.7266.1627-.082 1.3009.4889 1.5079 1.2012 1.0404-.799 1.4278-2.1144 1.4278-2.924 0-1.2212-1.583.6402-3.5413.6485-1.4686-.0061-2.7266-1.0558-3.2639-1.0645zM4.312 14.4768c.5792.365 1.6964 2.2751 2.1056 3.0177.1371.2488.371.3536.582.3536.4188 0 .7465-.4138.0391-.9395-1.0636-.791-.6914-2.0846-.1836-2.1642a.4302.4302 0 0 1 .0664-.004c.4616 0 .666.7892.666.7892s.5959 1.4898 1.6213 2.508c.942.9356 1.062 1.703.4961 2.6661-.0164-.004-.0159.0236-.1484.2149-.1853.2673-.4322.4688-.7188.6152-.5062.2269-1.1397.2696-1.7833.2696-1.037 0-2.1017-.1824-2.6975-.336-.0293-.0075-3.6505-.9567-3.1916-1.8224.0771-.1454.2033-.2031.3633-.2031.6463 0 1.823.9551 2.3283.9551.113 0 .196-.0865.2285-.2031.2249-.8045-3.2787-1.0522-2.9846-2.1642.0519-.1967.193-.2757.3907-.2754.854 0 2.7704 1.4923 3.172 1.4923.0307 0 .0525-.0085.0645-.0274.2012-.3227.1096-.5865-1.3087-1.4395-1.4182-.8533-2.4315-1.329-1.8653-1.9416.0651-.0707.1574-.1015.2695-.1015.8611.0002 2.8948 1.84 2.8948 1.84s.5487.5683.8809.5683c.0762 0 .1416-.0315.1855-.1054.2355-.3946-2.1858-2.2183-2.3224-2.971-.0926-.51.0641-.7676.3555-.7676-.0006.008.1701-.0285.4942.1759zm16.2257.5918c-.1366.7526-2.5579 2.5764-2.3224 2.9709.044.074.1092.1055.1855.1055.3321 0 .881-.5684.881-.5684s2.0336-1.8397 2.8947-1.84c.1121 0 .2044.0308.2695.1016.5662.6125-.447 1.0882-1.8653 1.9415-1.4183.853-1.51 1.1168-1.3087 1.4396.012.0188.0337.0273.0644.0273.4016 0 2.3181-1.4923 3.1721-1.4923.1977-.0002.3388.0787.3907.2754.294 1.112-3.2095 1.3597-2.9846 2.1642.0325.1166.1156.2032.2285.2032.5054 0 1.682-.9552 2.3283-.9552.16 0 .2862.0577.3633.2032.459.8656-3.1623 1.8149-3.1916 1.8224-.5958.1535-1.6605.336-2.6975.336-.6351 0-1.261-.0409-1.7638-.2599-.2949-.1472-.5488-.3516-.7383-.625-.0411-.0682-.1026-.1476-.1426-.205-.5726-.9679-.455-1.7371.4903-2.676 1.0254-1.0182 1.6212-2.508 1.6212-2.508s.2044-.7891.666-.7891a.4318.4318 0 0 1 .0665.0039c.5078.0796.88 1.3732-.1836 2.1642-.7074.5257-.3797.9395.039.9395.211 0 .445-.1047.5821-.3535.4092-.7426 1.5264-2.6527 2.1056-3.0178.5588-.3524.99-.1816.8497.5918z"/></svg>Datasets</a>
+                        <span class="row-break" aria-hidden="true"></span>
+                        <a class="btn" href="#quickstart"><svg viewBox="0 0 576 512" aria-hidden="true"><path d="M9.4 86.6C-3.1 74.1-3.1 53.8 9.4 41.3s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>Quickstart</a>
+                        <a class="btn" href="mailto:sergio.hernandez@bethgelab.org"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>Contact</a>
                     </div>
-                    <p class="byline">
-                        Sergio Hernández-Gutiérrez · Matteo Merler · Ilze Amanda Auzina · Joschka Strüber · Ameya Prabhu
-                        · Matthias Bethge
-                        <br /><span class="muted"
-                            >Tübingen AI Center, University of Tübingen · Fondazione Bruno Kessler ·
-                            <a href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener"
-                                >arXiv:2606.32034</a
-                            ></span
-                        >
-                    </p>
+                    <div class="byline">
+                        <div class="authors">
+                            <span>Sergio Hernández-Gutiérrez<sup>1</sup></span>
+                            <span>Matteo Merler<sup>2,*</sup></span>
+                            <span>Ilze Amanda Auzina<sup>1,*</sup></span>
+                            <span>Joschka Strüber<sup>1</sup></span>
+                            <span>Ameya Prabhu<sup>1,†</sup></span>
+                            <span>Matthias Bethge<sup>1,†</sup></span>
+                        </div>
+                        <p class="affil muted">
+                            <sup>1</sup>Tübingen AI Center, University of Tübingen &nbsp;·&nbsp;
+                            <sup>2</sup>Fondazione Bruno Kessler &nbsp;·&nbsp;<br>*equal contribution &nbsp;·&nbsp;
+                            †equal advising
+                        </p>
+                    </div>
                 </div>
 
                 <div class="wrap">
                     <div class="terminal" aria-hidden="true">
                         <div class="term-bar">
                             <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span
-                            ><span class="term-title">qval — evaluate a candidate signal</span>
+                            ><span class="term-title">qval: evaluate a candidate signal</span>
                         </div>
                         <pre class="term-body"><code id="typed"></code><span class="caret"></span></pre>
                     </div>
@@ -93,10 +76,6 @@
                             <div class="measure">
                                 <p class="half-kicker">The tool</p>
                                 <h2 class="half-title">A testbed for the post-training community</h2>
-                                <p class="half-lead">
-                                    What QVal measures, why Q-alignment is the right target, and how to install, run,
-                                    and extend it on your own methods and environments.
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -105,10 +84,9 @@
                     <section class="prose" id="problem">
                         <div class="wrap">
                             <div class="measure">
-                                <h2>The bottleneck</h2>
                                 <p>
-                                    Dense supervision methods all try to score intermediate steps. They are evaluated
-                                    them by downstream post-training performance.
+                                    Dense supervision methods all try to score intermediate steps. But they are
+                                    evaluated by their downstream post-training performance.
                                 </p>
                                 <p>
                                     That is expensive, it conflates the quality of the signal with the engineering
@@ -119,49 +97,41 @@
                                     “Can we evaluate dense supervision signals in isolation, before expensive
                                     post-training runs?”
                                 </blockquote>
+                                <p>
+                                    A dense supervision method assigns a scalar score <code>k(s, a)</code> to each
+                                    action. QVal measures one property: whether that score ranks decisions the way their
+                                    eventual return does.
+                                </p>
+                                <div
+                                    class="eq"
+                                    role="math"
+                                    aria-label="Q-alignment: k of s, a equals capital phi of Q superscript pi of s, a, where capital phi is strictly increasing"
+                                >
+                                    <span class="eq-label">Q-alignment</span>
+                                    <span class="eq-body"
+                                        ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>Φ</i>(<i>Q</i
+                                        ><sup><i>π</i></sup
+                                        >(<i>s</i>,&thinsp;<i>a</i>))</span
+                                    >
+                                    <span class="eq-where">where <i>Φ</i> is strictly increasing</span>
+                                </div>
+                                <p>
+                                    The reference Q-value is the expected return of continuing from <code>(s, a)</code>
+                                    under a strong reference policy (e.g., an optimal policy or a frontier model).
+                                    Predictions live on incompatible scales, so we compare the <em>ordering</em> they
+                                    induce, reporting <strong>Spearman&nbsp;ρ</strong> against the reference labels.
+                                    Same inputs, same targets, fixed backbones.
+                                </p>
                             </div>
                         </div>
                     </section>
                 </div>
                 <!-- /tool-intro -->
 
-                <!-- THE IDEA -->
-                <section class="band" id="idea">
-                    <div class="wrap">
-                        <div class="idea-head">
-                            <h2>The idea: Q-alignment</h2>
-                            <p class="lead">
-                                A dense supervision method assigns a scalar score <code>k(s, a)</code> to each action.
-                                QVal measures one property: whether that score ranks decisions the way their eventual
-                                return does.
-                            </p>
-                            <div
-                                class="eq"
-                                role="math"
-                                aria-label="k of s, a equals phi of Q superscript pi of s, a, where phi is strictly increasing"
-                            >
-                                <span class="eq-body"
-                                    ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>φ</i>(<i>Q</i
-                                    ><sup><i>π</i></sup
-                                    >(<i>s</i>,&thinsp;<i>a</i>))</span
-                                >
-                                <span class="eq-where">where <i>φ</i> is strictly increasing</span>
-                            </div>
-                            <p class="lead">
-                                The reference Q-value is the expected return of continuing from <code>(s, a)</code>
-                                under a strong reference policy (e.g., an optimal policy or a frontier model).
-                                Predictions live on incompatible scales, so we compare the
-                                <em>ordering</em> they induce, reporting <strong>Spearman&nbsp;ρ</strong> against the
-                                reference labels. Same inputs, same targets, fixed backbones.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- HOW IT WORKS -->
                 <section class="band band-tint" id="how">
                     <div class="wrap">
-                        <h2>How the testbed works</h2>
+                        <h2>How it works</h2>
                         <p class="lead measure">
                             The same five-stage recipe runs for every environment. You can skip the first three and use
                             our pre-collected datasets.
@@ -199,7 +169,7 @@
                                                 <div class="pb-body">
                                                     <div class="pb-text">
                                                         <h3 class="pb-name">Collect &amp; sample</h3>
-                                                        <p class="pb-desc">pluck a decision point</p>
+                                                        <p class="pb-desc">a state–action pair from a trajectory</p>
                                                     </div>
                                                     <div class="pb-art">
                                                         <span class="pb-states" aria-hidden="true"
@@ -215,7 +185,7 @@
                                                 <div class="pb-body">
                                                     <div class="pb-text">
                                                         <h3 class="pb-name">Label · MVMC</h3>
-                                                        <p class="pb-desc">best of <i>k</i> rollouts</p>
+                                                        <p class="pb-desc">max return over <i>k</i> rollouts</p>
                                                     </div>
                                                     <div class="pb-art">
                                                         <svg viewBox="0 0 120 64" class="pb-fan" aria-hidden="true">
@@ -259,7 +229,7 @@
                                                 <div class="pb-body">
                                                     <div class="pb-text">
                                                         <h3 class="pb-name">Predict</h3>
-                                                        <p class="pb-desc">the method scores it</p>
+                                                        <p class="pb-desc">the method's scalar score</p>
                                                     </div>
                                                     <div class="pb-art">
                                                         <span class="pb-bars" aria-hidden="true">
@@ -361,11 +331,10 @@
 
                                     <div class="pc-merge">
                                         <span class="pc-rho">ρ</span>
-                                        <span class="pc-merge-l">Spearman<br />Q-aligned</span>
+                                        <span class="pc-merge-l">Spearman ρ</span>
                                     </div>
                                 </div>
                             </div>
-                            <figcaption>From trajectories to a Q-aligned score.</figcaption>
                         </figure>
                     </div>
                 </section>
@@ -375,44 +344,48 @@
                     <div class="wrap">
                         <h2>Quickstart</h2>
                         <p class="lead measure">
-                            QVal is plug-and-play. The benchmark catalog ships pre-populated and its datasets come
-                            pre-collected, so evaluating the built-in methods on the built-in environments is four
-                            commands. One catalog is the single source of truth: the configs are generated from it, and
-                            the final step discovers and pairs every result on its own.
+                            The methods, environments, and their datasets are all included. To score a built-in method
+                            on a built-in environment, install once, then generate the configs, predict, and evaluate.
                         </p>
                         <div class="code-grid">
-                            <div class="codeblock">
-                                <div class="code-head">
-                                    <span>install</span><button class="copy" type="button">copy</button>
-                                </div>
-                                <pre><code data-lang="bash"># clone llenvs alongside this repo, then:
+                            <div class="code-col">
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>install</span><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="bash"># clone llenvs next to qval (path dependency)
+git clone https://github.com/serhez/llenvs
+git clone https://github.com/bethgelab/qval
+cd qval
 uv pip install -e ".[all]"</code></pre>
-                            </div>
-                            <div class="codeblock">
-                                <div class="code-head">
-                                    <span>1 · generate configs from the catalog</span
-                                    ><button class="copy" type="button">copy</button>
                                 </div>
-                                <pre><code data-lang="bash">python scripts/generate_configs.py</code></pre>
-                            </div>
-                            <div class="codeblock">
-                                <div class="code-head">
-                                    <span>2 · method prediction</span><button class="copy" type="button">copy</button>
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>generate</span><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="bash">python scripts/generate_configs.py</code></pre>
                                 </div>
-                                <pre><code data-lang="bash">python scripts/pipeline/predict.py --config \
+                            </div>
+                            <div class="code-col">
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>predict</span><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="bash">python scripts/pipeline/predict.py --config \
   catalogs/qval_benchmark/configs/prediction/frozen_lake/100pt_8x8_q35-27-or_text.yaml</code></pre>
-                            </div>
-                            <div class="codeblock">
-                                <div class="code-head">
-                                    <span>3 · evaluation</span><button class="copy" type="button">copy</button>
                                 </div>
-                                <pre><code data-lang="bash"># discovers every prediction, writes the correlations
+                                <div class="codeblock">
+                                    <div class="code-head">
+                                        <span>evaluate</span><button class="copy" type="button">copy</button>
+                                    </div>
+                                    <pre><code data-lang="bash"># discovers every prediction, writes the correlations
 python scripts/pipeline/evaluate.py</code></pre>
+                                </div>
                             </div>
                         </div>
                         <p class="small muted center-note">
                             Models are served through the backends declared in
-                            <code>shared/configs/backends.yaml</code>. For full runs, the wrappers in
+                            <code>shared/configs/backends.yaml</code>. <br> For full runs, the wrappers in
                             <code>scripts/slurm/</code> submit each step as a cluster job.
                         </p>
                     </div>
@@ -421,15 +394,15 @@ python scripts/pipeline/evaluate.py</code></pre>
                 <!-- EXTEND -->
                 <section class="band band-tint" id="extend">
                     <div class="wrap">
-                        <h2>Extend the testbed</h2>
+                        <h2>Extending QVal</h2>
                         <p class="lead measure">
-                            QVal is made for your experiments. You can define your own registry catalog
-                            (<code>catalogs/&lt;your_experiment&gt;/catalog.py</code>): add your methods or environments
-                            there and generate configs with <code>generate_configs.py</code>.
+                            QVal runs on your own methods and environments. Register them in a catalog file
+                            (<code>catalogs/&lt;your_experiment&gt;/catalog.py</code>), then rerun
+                            <code>generate_configs.py</code> to build their configs.
                         </p>
                         <div class="ext-grid">
-                            <div class="ext-card">
-                                <h3><span class="accent">+</span> A new method</h3>
+                            <details class="ext-card">
+                                <summary class="ext-head"><span>add-method</span></summary>
                                 <p>
                                     A method turns a <code>(state, action, next_state)</code> step into a scalar.
                                     Subclass <code>DenseSignalMethod</code> and implement
@@ -447,11 +420,11 @@ python scripts/pipeline/evaluate.py</code></pre>
         # self.context: task & reward text, signal_type …
         return float(...)        # math.nan on failure</code></pre>
                                 </div>
-                            </div>
-                            <div class="ext-card">
-                                <h3><span class="accent">+</span> A new environment</h3>
+                            </details>
+                            <details class="ext-card">
+                                <summary class="ext-head"><span>add-environment</span></summary>
                                 <p>
-                                    Environments come through <code>llenvs</code>, a unified, stateless interface (<code
+                                    Environments come through <code>llenvs</code>, a stateless interface (<code
                                         >env.step(state, action)</code
                                     >
                                     is pure) that makes Monte-Carlo rollouts from arbitrary states possible. Write an
@@ -472,7 +445,7 @@ task_description: >-
 evaluator_extractor:          # method text → number
   type: numeric</code></pre>
                                 </div>
-                            </div>
+                            </details>
                         </div>
                     </div>
                 </section>
@@ -481,24 +454,32 @@ evaluator_extractor:          # method text → number
 
             <!-- ===== ZONE: THE BENCHMARK ===== -->
             <div class="zone zone-bench">
-                <div class="half-opener" id="study">
+                <div class="half-opener" id="benchmark">
                     <div class="wrap">
                         <div class="measure">
-                            <p class="half-kicker">The study</p>
-                            <h2 class="half-title">Applying QVal at scale</h2>
-                            <p class="half-lead">
-                                We point the testbed at the field and report what aligns with value: 21 methods across
-                                seven families, six backbones, text and vision modalities, and four environments, over
-                                1.2K experiments.
-                            </p>
+                            <p class="half-kicker">The benchmark</p>
+                            <h2 class="half-title">QVal-v1.0</h2>
                         </div>
                     </div>
                 </div>
 
-                <!-- ENVIRONMENTS -->
-                <section class="band" id="environments">
+                <!-- QVAL v1.0: environments + leaderboard -->
+                <section class="band" id="results">
                     <div class="wrap">
-                        <h2>Four environments at release</h2>
+                        <p class="lead measure">
+                            It is the first instance of the QVal methodology: the exact methods, environments,
+                            and datasets scored below.
+                        </p>
+                        <div class="stat-band">
+                            <div class="stat"><b>21</b><span>methods</span></div>
+                            <div class="stat"><b>7</b><span>families</span></div>
+                            <div class="stat"><b>6</b><span>backbones</span></div>
+                            <div class="stat"><b>4</b><span>environments</span></div>
+                            <div class="stat"><b>1.2K+</b><span>experiments</span></div>
+                            <div class="stat"><b>0</b><span>training runs</span></div>
+                        </div>
+
+                        <h3 class="subhead" id="environments">Environments</h3>
                         <p class="lead measure">
                             Spanning text and vision, from closed-action navigation to open-ended shell use.
                         </p>
@@ -520,22 +501,9 @@ evaluator_extractor:          # method text → number
                                 <figcaption><b>TerminalBench</b><span>programming & agentic terminal</span></figcaption>
                             </figure>
                         </div>
-                    </div>
-                </section>
 
-                <!-- RESULTS / LEADERBOARD -->
-                <section class="band band-tint" id="results">
-                    <div class="wrap">
-                        <h2>QVal-v1.0 — the benchmark</h2>
+                        <h3 class="subhead">Leaderboard</h3>
                         <p class="lead measure">Explore every method's Q-alignment below.</p>
-                        <div class="stat-band">
-                            <div class="stat"><b>21</b><span>methods</span></div>
-                            <div class="stat"><b>7</b><span>families</span></div>
-                            <div class="stat"><b>6</b><span>backbones</span></div>
-                            <div class="stat"><b>4</b><span>environments</span></div>
-                            <div class="stat"><b>1.2K+</b><span>experiments</span></div>
-                            <div class="stat"><b>0</b><span>training runs</span></div>
-                        </div>
                         <div id="board"></div>
                     </div>
                 </section>
@@ -544,38 +512,31 @@ evaluator_extractor:          # method text → number
                 <section class="prose" id="findings">
                     <div class="wrap">
                         <div class="measure">
-                            <h2>What we found</h2>
-                            <p>
-                                The interactive table above holds the full numbers; here is what they add up to. Every
-                                result below holds across model sizes, environments, and observation modalities.
-                            </p>
+                            <h2>Findings</h2>
 
                             <p class="find-group">Main results</p>
                             <div class="finding">
                                 <h3>Simple prompting is the strongest baseline.</h3>
                                 <p>
-                                    Ranking and direct value prediction achieve the highest Q-alignment in every
-                                    environment and backbone, consistently out-aligning more recent and more specialized
-                                    dense-supervision methods. Direct value elicitation should be treated as a required
-                                    baseline.
+                                    Ranking and direct value prediction reach the highest Q-alignment in every
+                                    environment and backbone, outperforming newer and more specialized
+                                    dense-supervision methods.
                                 </p>
                             </div>
                             <div class="finding">
                                 <h3>Performance clusters by family.</h3>
                                 <p>
-                                    Correlations fall into tight bands within each of the seven families, which supports
-                                    the taxonomy: the family a method belongs to predicts its behavior better than its
-                                    individual design tricks. Code methods are the exception, with by far the widest
-                                    spread; their effectiveness hinges on how readily a state and action space can be
-                                    captured in code.
+                                    Correlations fall into tight bands within each of the seven families: the family
+                                    predicts a method's behavior better than its individual design. Code methods
+                                    are the exception, with by far the widest spread, since their effectiveness depends
+                                    on how easily a state and action space can be written in code.
                                 </p>
                             </div>
                             <div class="finding">
                                 <h3>Added complexity rarely helps.</h3>
                                 <p>
-                                    Within a family, elaborate variants don't reliably beat the simplest one.
-                                    Multi-estimate and batched/sequential direct prompting don't significantly
-                                    outperform
+                                    Elaborate variants don't reliably beat the simplest one in their family.
+                                    Multi-estimate and batched/sequential direct prompting don't significantly outperform
                                     <code>direct-single</code>; privileged self-distillation (<code>sdpo-gt</code>)
                                     doesn't improve on plain <code>sdpo</code>; averaging generated functions
                                     (<code>codegen-avg</code>) lifts the mean over <code>codegen</code> only slightly.
@@ -585,11 +546,9 @@ evaluator_extractor:          # method text → number
                                 <h3>Difficulty doesn't predict alignment.</h3>
                                 <p>
                                     From closed-action FrozenLake to open-ended TerminalBench, Q-alignment does not fall
-                                    monotonically with task difficulty. Direct prompting stays positive everywhere; code
-                                    and ranking weaken in open-ended settings, while self-distillation does the
-                                    opposite, growing stronger where richer intermediate feedback is available.
-                                    Alignment depends on a method's interaction with each environment, not on difficulty
-                                    alone.
+                                    monotonically with difficulty. Direct prompting stays positive everywhere; code and
+                                    ranking weaken in open-ended settings, while self-distillation grows stronger where
+                                    richer intermediate feedback is available.
                                 </p>
                             </div>
 
@@ -598,44 +557,30 @@ evaluator_extractor:          # method text → number
                                 <h3>Text beats vision.</h3>
                                 <p>
                                     On environments that provide both, methods recover reference values more reliably
-                                    from text than from images. Parsing pixels is harder, and the extra visual context
-                                    does not compensate for the model–method pairs we examine. This reflects the
-                                    abstraction available to each modality and the backbones' modality-specific
-                                    performance, not an intrinsic inferiority of visual feedback.
+                                    from text than from images.
                                 </p>
                             </div>
                             <div class="finding">
                                 <h3>Rankings survive the choice of target.</h3>
                                 <p>
                                     Relabelling with state-values <code>V(s)</code> instead of Q-values largely
-                                    preserves the method ordering, so the conclusions don't hinge on a single target.
-                                    Absolute scores do shift (e.g., code and pre-trained methods align better with
-                                    state-values, direct prompting with Q-values), reflecting method preferences for
-                                    input consumption.
-                                </p>
-                            </div>
-                            <div class="finding">
-                                <h3>Labels are robust to the reference backbone.</h3>
-                                <p>
-                                    On TerminalBench, reference values estimated by two independent frontier models
-                                    (GPT-5.5 and Claude Opus 4.7) yield closely matching method correlations. The labels
-                                    capture a stable notion of downstream progress rather than one model's
-                                    idiosyncrasies.
+                                    preserves the method ordering. Absolute scores shift (code and pre-trained methods
+                                    align better with state-values, direct prompting with Q-values), but not the order.
                                 </p>
                             </div>
 
-                            <p class="find-group">What it means</p>
+                            <p class="find-group">Implications</p>
                             <div class="finding">
                                 <h3>Signal quality is conflated with training recipes.</h3>
                                 <p>
-                                    Because plain prompting is so competitive when measured directly, much of the
-                                    reported progress of complex methods may stem from changes in data, compute,
-                                    exploration, prompting, or optimization rather than from a better dense signal.
-                                    Measuring alignment first separates the two.
+                                    Because plain prompting is competitive when measured directly, much of the reported
+                                    progress of complex methods may come from changes in data, compute, exploration,
+                                    prompting, or optimization rather than from a better dense signal. Measuring
+                                    Q-alignment first separates the two.
                                 </p>
                             </div>
                             <div class="finding">
-                                <h3>A low score rules a method out; a high score is a green light, not a guarantee.</h3>
+                                <h3>Score interpretation.</h3>
                                 <p>
                                     QVal measures signal quality on its own and leaves integration as a separate
                                     downstream question. It is a cheap diagnostic that filters candidate signals before
@@ -648,50 +593,21 @@ evaluator_extractor:          # method text → number
             </div>
             <!-- /zone-bench -->
 
-            <!-- AUTHORS / CITE -->
+            <!-- CITATION -->
             <section class="prose" id="cite">
                 <div class="wrap">
                     <div class="measure">
-                        <h2>Authors &amp; citation</h2>
-                        <p class="authors-line">
-                            <b>Sergio Hernández-Gutiérrez</b><sup>1</sup>, <b>Matteo Merler</b><sup>2,*</sup>,
-                            <b>Ilze Amanda Auzina</b><sup>1,*</sup>, <b>Joschka Strüber</b><sup>1</sup>,
-                            <b>Ameya Prabhu</b><sup>1,†</sup>, <b>Matthias Bethge</b><sup>1,†</sup>
-                        </p>
-                        <p class="muted small">
-                            <sup>1</sup> Tübingen AI Center, University of Tübingen &nbsp;·&nbsp;
-                            <sup>2</sup> Fondazione Bruno Kessler &nbsp;·&nbsp; * equal contribution &nbsp; † equal
-                            advising <br />Correspondence: sergio.hernandez@bethgelab.org
-                        </p>
+                        <h2>Citation</h2>
                         <div class="bibwrap">
                             <div class="bib-head">
                                 <span>BibTeX</span><button class="copy" id="cite-copy" type="button">Copy</button>
                             </div>
                             <pre><code id="bibtex">Loading…</code></pre>
                         </div>
-                        <div class="cite-links">
-                            <a class="btn" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener"
-                                >arXiv</a
-                            >
-                            <a class="btn" href="https://github.com/bethgelab/qval" target="_blank" rel="noopener"
-                                >Code</a
-                            >
-                            <a
-                                class="btn"
-                                href="https://huggingface.co/datasets/bethgelab/qval/"
-                                target="_blank"
-                                rel="noopener"
-                                >Datasets</a
-                            >
-                        </div>
                     </div>
                 </div>
             </section>
         </main>
-
-        <footer class="foot">
-            <div class="wrap">QVal · Tübingen AI Center · training-free evaluation of dense supervision signals</div>
-        </footer>
 
         <script type="module" src="app.js">
 </script>

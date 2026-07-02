@@ -101,27 +101,12 @@ document.addEventListener("click", (e) => {
     });
 });
 
-/* ---- mobile nav ---- */
-const burger = document.querySelector(".burger");
-const links = document.querySelector(".nav-links");
-burger?.addEventListener("click", () => {
-    const open = links.classList.toggle("open");
-    burger.setAttribute("aria-expanded", String(open));
-});
-links?.addEventListener("click", (e) => {
-    if (e.target.tagName === "A") {
-        links.classList.remove("open");
-        burger.setAttribute("aria-expanded", "false");
-    }
-});
-
 /* ---- hero terminal typewriter ---- */
 const SESSION = [
     { c: "c-prompt", t: "❯ " },
     { c: "c-cmd", t: "python scripts/pipeline/predict.py", type: true },
     { t: "\n" },
     { c: "c-dim", t: "  scoring 94 state–action pairs with my_method …\n", print: 380 },
-    { c: "c-dim", t: "  reference rollouts (Max-Value Monte Carlo) …\n", print: 520 },
     { c: "c-prompt", t: "❯ " },
     { c: "c-cmd", t: "python scripts/pipeline/evaluate.py", type: true },
     { t: "\n" },
@@ -132,7 +117,7 @@ const SESSION = [
     { c: "c-num", t: "0.34\n", print: 60 },
     { c: "c-cmd", t: "  my_method      ", print: 160 },
     { c: "c-num", t: "0.18\n", print: 60 },
-    { c: "c-ok", t: "  ✓ done — no training run required\n", print: 420 },
+    { c: "c-ok", t: "  ✓ done: no training run required\n", print: 420 },
 ];
 
 const out = document.getElementById("typed");
@@ -268,8 +253,6 @@ function setupTreeMotif() {
     const canvas = document.getElementById("tool-tree");
     const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
     if (!ctx) return;
-    const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
-    const MONO = "ui-monospace,'SF Mono',Menlo,Consolas,monospace";
     const MAXDEPTH = 11,
         CAP = 900;
     let edges = [],
@@ -329,7 +312,8 @@ function setupTreeMotif() {
                 const child = { x: node.x + Math.cos(cdir) * len, y: node.y + Math.sin(cdir) * len, depth: depth + 1, tDone: 0 };
                 const t0 = parentEdge ? parentEdge.t1 + (0.01 + 0.085 * rnd()) : 0.03 * rnd();
                 const t1 = t0 + (0.09 + 0.1 * rnd());
-                const edge = { a: node, b: child, depth: depth, t0: t0, t1: t1 };
+                const edge = { a: node, b: child, depth: depth, t0: t0, t1: t1, value: 0 };
+                child.parentEdge = edge;
                 edges.push(edge);
                 count++;
                 queue.push({ node: child, dir: cdir, depth: depth + 1, edge: edge });
@@ -350,6 +334,19 @@ function setupTreeMotif() {
         if (cand.length >= 2) rewards = [cand[Math.floor(cand.length * 0.27)], cand[Math.floor(cand.length * 0.75)]];
         else rewards = cand.slice(0, 2);
         for (const rw of rewards) rw.rStart = rw.tDone + 0.12;
+        // back up value from each rewarded leaf toward the root, like a discounted Q-value
+        const GAMMA = 0.8;
+        for (const rw of rewards) {
+            let node = rw,
+                steps = 0;
+            while (node.parentEdge) {
+                const e = node.parentEdge;
+                const v = Math.pow(GAMMA, steps);
+                if (v > e.value) e.value = v;
+                node = e.a;
+                steps++;
+            }
+        }
     }
     function draw(el) {
         const r = canvas.getBoundingClientRect();
@@ -359,8 +356,15 @@ function setupTreeMotif() {
             if (p <= 0) continue;
             const x = ed.a.x + (ed.b.x - ed.a.x) * p,
                 y = ed.a.y + (ed.b.y - ed.a.y) * p;
-            ctx.strokeStyle = "rgba(33,29,23," + Math.max(0.05, 0.26 - 0.022 * ed.depth).toFixed(3) + ")";
-            ctx.lineWidth = Math.max(0.5, 1.7 - 0.13 * ed.depth);
+            // cool faint ink far from any reward, warming to accent-red as value backs up
+            const val = ed.value;
+            const cr = Math.round(33 + 105 * val),
+                cg = Math.round(29 + 14 * val),
+                cb = Math.round(23 + 29 * val);
+            const coolA = Math.max(0.05, 0.2 - 0.018 * ed.depth);
+            const a = Math.min(0.78, coolA + 0.6 * val);
+            ctx.strokeStyle = "rgba(" + cr + "," + cg + "," + cb + "," + a.toFixed(3) + ")";
+            ctx.lineWidth = Math.max(0.5, 1.5 - 0.1 * ed.depth) + 1.8 * val;
             ctx.beginPath();
             ctx.moveTo(ed.a.x, ed.a.y);
             ctx.lineTo(x, y);
@@ -379,11 +383,6 @@ function setupTreeMotif() {
             ctx.beginPath();
             ctx.arc(root.x, root.y, 5, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "rgba(133,124,110,0.95)";
-            ctx.font = "600 12px " + SANS;
-            ctx.textAlign = "left";
-            ctx.textBaseline = "middle";
-            ctx.fillText("start", root.x + 11, root.y);
         }
         for (const rw of rewards) {
             const rp = ease(clamp((el - rw.rStart) / 0.55));
@@ -396,13 +395,6 @@ function setupTreeMotif() {
             ctx.beginPath();
             ctx.arc(rw.x, rw.y, 2.5 + 4 * rp, 0, Math.PI * 2);
             ctx.fill();
-            ctx.globalAlpha = rp;
-            ctx.fillStyle = "#8a2b34";
-            ctx.font = "700 16px " + MONO;
-            ctx.textAlign = "left";
-            ctx.textBaseline = "middle";
-            ctx.fillText("+1", rw.x + 12, rw.y - 3 * (1 - rp));
-            ctx.globalAlpha = 1;
         }
     }
     function frame(ts) {
