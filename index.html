@@ -6,7 +6,7 @@
         <title>QVal — Evaluate dense supervision signals before you train</title>
         <meta
             name="description"
-            content="QVal is a training-free testbed that measures whether a dense supervision signal aligns with reference Q-values, separating signal quality from training engineering."
+            content="QVal is a training-free testbed that measures whether a dense supervision signal orders each state's candidate actions like a reference policy's returns do, separating signal quality from training engineering."
         />
         <link
             rel="icon"
@@ -44,7 +44,8 @@
                         Long-horizon LLM agents take hundreds of actions, yet an outcome-only reward tells them nothing
                         about the steps along the way. <strong>QVal</strong> measures whether a dense supervision signal
                         is <em>Q-aligned</em>, so signal quality can be judged on common ground, cheaply, and apart from
-                        the engineering of any training pipeline.
+                        the engineering of any training pipeline. And Q-alignment pays off: it strongly predicts how
+                        much a signal improves an agent's success when it guides the agent's actions.
                     </p>
                     <div class="hero-actions">
                         <a class="btn btn-fill" href="https://arxiv.org/abs/2606.32034" target="_blank" rel="noopener"
@@ -107,16 +108,16 @@
                             <div class="measure">
                                 <h2>The bottleneck</h2>
                                 <p>
-                                    Dense supervision methods all try to score intermediate steps. They are evaluated
-                                    them by downstream post-training performance.
+                                    Dense supervision methods all try to score intermediate steps. They are usually
+                                    evaluated through the downstream performance of a full training pipeline.
                                 </p>
                                 <p>
-                                    That is expensive, it conflates the quality of the signal with the engineering
-                                    choices around it, and it makes methods that require different training setups
-                                    impossible to compare.
+                                    That is expensive, it confounds the quality of the signal with other training
+                                    choices (optimization, normalization, how the signal is mixed with other rewards),
+                                    and it means methods are rarely compared on common ground.
                                 </p>
                                 <blockquote>
-                                    “Can we evaluate dense supervision signals in isolation, before expensive
+                                    “Can we evaluate dense supervision signals in isolation, before any expensive
                                     post-training runs?”
                                 </blockquote>
                             </div>
@@ -132,27 +133,30 @@
                             <h2>The idea: Q-alignment</h2>
                             <p class="lead">
                                 A dense supervision method assigns a scalar score <code>k(s, a)</code> to each action.
-                                QVal measures one property: whether that score ranks decisions the way their eventual
-                                return does.
+                                QVal measures one property: within a state, does the method give higher scores to the
+                                actions that make eventual success more likely?
                             </p>
                             <div
                                 class="eq"
                                 role="math"
-                                aria-label="k of s, a equals phi of Q superscript pi of s, a, where phi is strictly increasing"
+                                aria-label="Q superscript pi of s, a greater than Q superscript pi of s, b implies k of s, a greater than k of s, b, for every state s and candidate actions a, b"
                             >
                                 <span class="eq-body"
-                                    ><i>k</i>(<i>s</i>,&thinsp;<i>a</i>) <span class="eq-op">=</span> <i>φ</i>(<i>Q</i
-                                    ><sup><i>π</i></sup
-                                    >(<i>s</i>,&thinsp;<i>a</i>))</span
+                                    ><i>Q</i><sup><i>π</i></sup>(<i>s</i>,&thinsp;<i>a</i>) &gt; <i>Q</i
+                                    ><sup><i>π</i></sup>(<i>s</i>,&thinsp;<i>b</i>) <span class="eq-op">⟹</span>
+                                    <i>k</i>(<i>s</i>,&thinsp;<i>a</i>) &gt; <i>k</i>(<i>s</i>,&thinsp;<i>b</i>)</span
                                 >
-                                <span class="eq-where">where <i>φ</i> is strictly increasing</span>
+                                <span class="eq-where">for every state <i>s</i> and candidate actions <i>a</i>, <i>b</i></span>
                             </div>
                             <p class="lead">
-                                The reference Q-value is the expected return of continuing from <code>(s, a)</code>
-                                under a strong reference policy (e.g., an optimal policy or a frontier model).
-                                Predictions live on incompatible scales, so we compare the
-                                <em>ordering</em> they induce, reporting <strong>Spearman&nbsp;ρ</strong> against the
-                                reference labels. Same inputs, same targets, fixed backbones.
+                                The reference Q-value <i>Q</i><sup><i>π</i></sup>(<i>s</i>,&thinsp;<i>a</i>) is the
+                                return of executing <code>a</code> in <code>s</code> and then continuing under a strong
+                                reference policy <i>π</i> (an optimal policy or expert planner where available, a
+                                frontier model otherwise). The reference only labels the data; it need not be the policy
+                                later trained or guided by the signal. Scores need not be comparable across states, and
+                                predictions live on incompatible scales, so we compare the <em>ordering</em> they
+                                induce: <strong>Spearman&nbsp;ρ</strong> over each state's candidate actions, averaged
+                                over states. Same inputs, same targets, fixed backbones.
                             </p>
                         </div>
                     </div>
@@ -169,29 +173,31 @@
                         <ol class="flow">
                             <li><b>Collect trajectories.</b> Roll agents out in multi-turn environments.</li>
                             <li>
-                                <b>Sample state–action pairs.</b> Draw <code>(s, a)</code> pairs along the trajectories
-                                as evaluation points.
+                                <b>Sample states and candidate actions.</b> Draw states from the middle of the
+                                trajectories, each with a set of four candidate actions.
                             </li>
                             <li>
-                                <b>Label with reference Q-values.</b> Restore each state, force the action, follow the
-                                reference policy, and record the discounted return. Use Monte-Carlo estimates for
-                                stochastic policies/environments.
+                                <b>Label with reference Q-values.</b> Restore each state, execute the candidate, follow
+                                the reference policy, and record the discounted return. For stochastic references, keep
+                                the best return over <i>k</i> continuations (Max-Value Monte Carlo).
                             </li>
-                            <li><b>Collect method predictions.</b> Run the method of interest to score every pair.</li>
                             <li>
-                                <b>Evaluate by rank correlation.</b> Report Spearman&nbsp;ρ between the method's scores
-                                and the reference labels.
+                                <b>Collect method predictions.</b> Run the method of interest to score every candidate.
+                            </li>
+                            <li>
+                                <b>Evaluate by rank correlation.</b> Compute Spearman&nbsp;ρ between the method's scores
+                                and the reference labels within each state, then average over states.
                             </li>
                         </ol>
                         <figure class="figure-hero">
                             <div
                                 class="pipe"
-                                aria-label="QVal pipeline: from one sampled state–action pair to a Q-alignment score"
+                                aria-label="QVal pipeline: from one sampled state and its candidate actions to a Q-alignment score"
                             >
                                 <div class="px">
                                     <!-- build the two scores for one sampled point -->
                                     <div class="px-make">
-                                        <p class="px-act">For one sampled point</p>
+                                        <p class="px-act">For each candidate action</p>
                                         <ol class="pb">
                                             <span class="pb-token" aria-hidden="true"></span>
                                             <li class="pb-step">
@@ -199,7 +205,7 @@
                                                 <div class="pb-body">
                                                     <div class="pb-text">
                                                         <h3 class="pb-name">Collect &amp; sample</h3>
-                                                        <p class="pb-desc">pluck a decision point</p>
+                                                        <p class="pb-desc">a state and its candidates</p>
                                                     </div>
                                                     <div class="pb-art">
                                                         <span class="pb-states" aria-hidden="true"
@@ -250,7 +256,7 @@
                                                             />
                                                         </svg>
                                                         <span class="pb-arrow">&rarr;</span>
-                                                        <span class="pb-pill pb-pill--ref">Q*(s,&nbsp;a)</span>
+                                                        <span class="pb-pill pb-pill--ref">Q<sup>π</sup>(s,&nbsp;a)</span>
                                                     </div>
                                                 </div>
                                             </li>
@@ -280,16 +286,16 @@
 
                                     <!-- handoff: repeat across the whole dataset -->
                                     <div class="px-join" aria-hidden="true">
-                                        <span class="px-join-label">for every<br />sampled point</span>
+                                        <span class="px-join-label">for all candidates<br />of the state</span>
                                         <span class="px-join-arrow">&rarr;</span>
                                     </div>
 
                                     <!-- align the two induced orderings -->
                                     <div class="px-align">
-                                        <p class="px-act">Measure Q-alignment</p>
+                                        <p class="px-act">Measure Q-alignment within the state</p>
                                         <div class="pc-diagram">
                                             <svg viewBox="0 0 520 264" aria-hidden="true">
-                                                <text class="pc-hd pc-hd--ref" x="130" y="22">ranked by Q*</text>
+                                                <text class="pc-hd pc-hd--ref" x="130" y="22">ranked by Qπ</text>
                                                 <text class="pc-hd" x="390" y="22">ranked by k</text>
                                                 <g class="pc-col pc-col--ref">
                                                     <g class="pc-item">
@@ -361,11 +367,11 @@
 
                                     <div class="pc-merge">
                                         <span class="pc-rho">ρ</span>
-                                        <span class="pc-merge-l">Spearman<br />Q-aligned</span>
+                                        <span class="pc-merge-l">Spearman per state,<br />averaged over states</span>
                                     </div>
                                 </div>
                             </div>
-                            <figcaption>From trajectories to a Q-aligned score.</figcaption>
+                            <figcaption>From one state's candidate actions to a Q-alignment score.</figcaption>
                         </figure>
                     </div>
                 </section>
@@ -397,23 +403,27 @@ uv pip install -e ".[all]"</code></pre>
                             </div>
                             <div class="codeblock">
                                 <div class="code-head">
-                                    <span>2 · method prediction</span><button class="copy" type="button">copy</button>
+                                    <span>2 · method prediction (API-backed, no GPU)</span
+                                    ><button class="copy" type="button">copy</button>
                                 </div>
                                 <pre><code data-lang="bash">python scripts/pipeline/predict.py --config \
-  catalogs/qval_benchmark/configs/prediction/frozen_lake/100pt_8x8_q35-27-or_text.yaml</code></pre>
+  catalogs/qval_benchmark/configs/prediction/frozen_lake/no-gpu/100pt_8x8_q35-27-or_text.yaml</code></pre>
                             </div>
                             <div class="codeblock">
                                 <div class="code-head">
                                     <span>3 · evaluation</span><button class="copy" type="button">copy</button>
                                 </div>
-                                <pre><code data-lang="bash"># discovers every prediction, writes the correlations
+                                <pre><code data-lang="bash"># discovers every prediction, writes within-state Spearman ρ
 python scripts/pipeline/evaluate.py</code></pre>
                             </div>
                         </div>
                         <p class="small muted center-note">
                             Models are served through the backends declared in
-                            <code>shared/configs/backends.yaml</code>. For full runs, the wrappers in
-                            <code>scripts/slurm/</code> submit each step as a cluster job.
+                            <code>shared/configs/backends.yaml</code>. Generated configs are grouped by hardware
+                            class: <code>no-gpu/</code> for API-backed models, <code>gpu-&lt;N&gt;</code> for local
+                            models on <i>N</i> GPUs. For full runs,
+                            <code>scripts/slurm/submit_predictions.sh</code> submits every config as a cluster job
+                            with its class's resources.
                         </p>
                     </div>
                 </section>
@@ -488,8 +498,8 @@ evaluator_extractor:          # method text → number
                             <h2 class="half-title">Applying QVal at scale</h2>
                             <p class="half-lead">
                                 We point the testbed at the field and report what aligns with value: 21 methods across
-                                seven families, six backbones, text and vision modalities, and four environments, over
-                                1.2K experiments.
+                                seven families, six backbones, text and vision modalities, and four environments. Then
+                                we check that Q-alignment predicts downstream success when a signal guides an agent.
                             </p>
                         </div>
                     </div>
@@ -500,24 +510,26 @@ evaluator_extractor:          # method text → number
                     <div class="wrap">
                         <h2>Four environments at release</h2>
                         <p class="lead measure">
-                            Spanning text and vision, from closed-action navigation to open-ended shell use.
+                            Spanning text and vision, from closed-action navigation to open-ended shell use. Each
+                            sampled state comes with four candidate actions, labelled by the strongest reference policy
+                            available for the environment.
                         </p>
                         <div class="env-row">
                             <figure class="env">
                                 <img src="shared/figures/env_frozen_lake.png" alt="FrozenLake grid world" />
-                                <figcaption><b>FrozenLake</b><span>goal-directed navigation</span></figcaption>
+                                <figcaption><b>FrozenLake</b><span>goal-directed navigation</span><span>reference: value iteration</span></figcaption>
                             </figure>
                             <figure class="env">
                                 <img src="shared/figures/env_alfworld.png" alt="ALFWorld household scene" />
-                                <figcaption><b>ALFWorld</b><span>embodied reasoning</span></figcaption>
+                                <figcaption><b>ALFWorld</b><span>embodied reasoning</span><span>reference: PDDL planner</span></figcaption>
                             </figure>
                             <figure class="env">
                                 <img src="shared/figures/env_open_apps.png" alt="OpenApps application UI" />
-                                <figcaption><b>OpenApps</b><span>computer & application use</span></figcaption>
+                                <figcaption><b>OpenApps</b><span>computer & application use</span><span>reference: scripted policy</span></figcaption>
                             </figure>
                             <figure class="env">
                                 <img src="shared/figures/env_terminal_bench.png" alt="TerminalBench shell session" />
-                                <figcaption><b>TerminalBench</b><span>programming & agentic terminal</span></figcaption>
+                                <figcaption><b>TerminalBench</b><span>programming & agentic terminal</span><span>reference: GPT-5.5, best of 16</span></figcaption>
                             </figure>
                         </div>
                     </div>
@@ -526,17 +538,69 @@ evaluator_extractor:          # method text → number
                 <!-- RESULTS / LEADERBOARD -->
                 <section class="band band-tint" id="results">
                     <div class="wrap">
-                        <h2>QVal-v1.0 — the benchmark</h2>
-                        <p class="lead measure">Explore every method's Q-alignment below.</p>
+                        <h2>The benchmark</h2>
+                        <p class="lead measure">
+                            Explore every method's Q-alignment below. The default view is the benchmark itself; the
+                            other two views are the image-input and state-value ablations.
+                        </p>
                         <div class="stat-band">
                             <div class="stat"><b>21</b><span>methods</span></div>
                             <div class="stat"><b>7</b><span>families</span></div>
                             <div class="stat"><b>6</b><span>backbones</span></div>
                             <div class="stat"><b>4</b><span>environments</span></div>
-                            <div class="stat"><b>1.2K+</b><span>experiments</span></div>
                             <div class="stat"><b>0</b><span>training runs</span></div>
                         </div>
                         <div id="board"></div>
+                    </div>
+                </section>
+
+                <!-- DOWNSTREAM -->
+                <section class="band" id="downstream">
+                    <div class="wrap">
+                        <h2>Does Q-alignment predict downstream performance?</h2>
+                        <p class="lead measure">
+                            We let five signals guide an actor at test time. At each step the actor proposes four
+                            actions, the signal scores them, and the top-scoring one is executed; the unguided baseline
+                            executes one sampled action. This selection uses only the order of the scores within a
+                            state, which is exactly what Q-alignment measures. We run <code>direct-single</code>,
+                            <code>ranking</code>, <code>verifier</code>, <code>codegen-avg</code> and
+                            <code>sdpo</code> on FrozenLake (100 maps, Gemma 4 31B) and ALFWorld (24 games × 3 episodes,
+                            Qwen3.5 27B).
+                        </p>
+                        <figure class="figure-hero">
+                            <img
+                                src="shared/figures/guided_search.png"
+                                alt="Top: success gain over the unguided actor for five signals on FrozenLake and ALFWorld. Bottom: guided-search success against Spearman correlation, with Pearson r of 0.976 on FrozenLake and 0.926 on ALFWorld."
+                            />
+                            <figcaption>
+                                Top: success gain over the unguided actor (labels give success counts; bars are paired
+                                95% bootstrap intervals). Bottom: success against Spearman ρ measured on state–action
+                                pairs from the guided-search trajectories; <i>r</i> is the Pearson correlation across
+                                the five methods.
+                            </figcaption>
+                        </figure>
+                        <div class="ext-grid">
+                            <div class="ext-card">
+                                <h3>Q-alignment tracks task success.</h3>
+                                <p>
+                                    Across the five signals, Q-alignment correlates strongly with guided-search success
+                                    (Pearson <i>r</i> = 0.976 on FrozenLake, 0.926 on ALFWorld).
+                                    <code>direct-single</code>, <code>ranking</code> and <code>verifier</code> raise
+                                    success in both environments; <code>codegen-avg</code> shows no clear gain, and
+                                    <code>sdpo</code> drops FrozenLake success to 10%.
+                                </p>
+                            </div>
+                            <div class="ext-card">
+                                <h3>Measure on the decisions your actor will face.</h3>
+                                <p>
+                                    On the benchmark's FrozenLake data, <code>codegen-avg</code> and
+                                    <code>verifier</code> score alike (ρ = 0.787 vs. 0.764), yet reach 53% vs. 70%
+                                    success. On states sampled from the guided-search trajectories, their scores (0.489
+                                    vs. 0.676) match the downstream order. The state–action distribution of the dataset
+                                    matters.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -546,50 +610,61 @@ evaluator_extractor:          # method text → number
                         <div class="measure">
                             <h2>What we found</h2>
                             <p>
-                                The interactive table above holds the full numbers; here is what they add up to. Every
-                                result below holds across model sizes, environments, and observation modalities.
+                                The interactive table above holds the full numbers; here is what they add up to.
                             </p>
 
                             <p class="find-group">Main results</p>
                             <div class="finding">
-                                <h3>Simple prompting is the strongest baseline.</h3>
+                                <h3>Simple prompting baselines are the most Q-aligned.</h3>
                                 <p>
-                                    Ranking and direct value prediction achieve the highest Q-alignment in every
-                                    environment and backbone, consistently out-aligning more recent and more specialized
-                                    dense-supervision methods. Direct value elicitation should be treated as a required
-                                    baseline.
+                                    On average, <code>ranking</code>, <code>direct-16</code> and <code>verifier</code>
+                                    align best with reference values, ahead of more specialized dense supervision
+                                    methods. Direct value prediction should be treated as a required baseline.
                                 </p>
                             </div>
                             <div class="finding">
                                 <h3>Performance clusters by family.</h3>
                                 <p>
-                                    Correlations fall into tight bands within each of the seven families, which supports
-                                    the taxonomy: the family a method belongs to predicts its behavior better than its
-                                    individual design tricks. Code methods are the exception, with by far the widest
-                                    spread; their effectiveness hinges on how readily a state and action space can be
-                                    captured in code.
+                                    Methods in the same family reach similar correlation ranges, which suggests the
+                                    seven-family taxonomy captures real differences in the signal each family extracts.
+                                    Embedding-based signals are weak, and self-distillation signals are anti-aligned.
                                 </p>
                             </div>
                             <div class="finding">
-                                <h3>Added complexity rarely helps.</h3>
+                                <h3>How extra compute is spent matters.</h3>
                                 <p>
-                                    Within a family, elaborate variants don't reliably beat the simplest one.
-                                    Multi-estimate and batched/sequential direct prompting don't significantly
-                                    outperform
-                                    <code>direct-single</code>; privileged self-distillation (<code>sdpo-gt</code>)
-                                    doesn't improve on plain <code>sdpo</code>; averaging generated functions
-                                    (<code>codegen-avg</code>) lifts the mean over <code>codegen</code> only slightly.
+                                    Averaging several estimates improves alignment in 23 of 24 environment–backbone
+                                    pairs for direct prompting and in 13 of 17 for generated code
+                                    (<code>codegen-avg</code>). Sequential prompting (<code>direct-sequential</code>)
+                                    instead lowers alignment on TerminalBench for 4 of 5 backbones.
                                 </p>
                             </div>
                             <div class="finding">
-                                <h3>Difficulty doesn't predict alignment.</h3>
+                                <h3>Environment structure shapes alignment.</h3>
                                 <p>
-                                    From closed-action FrozenLake to open-ended TerminalBench, Q-alignment does not fall
-                                    monotonically with task difficulty. Direct prompting stays positive everywhere; code
-                                    and ranking weaken in open-ended settings, while self-distillation does the
-                                    opposite, growing stronger where richer intermediate feedback is available.
-                                    Alignment depends on a method's interaction with each environment, not on difficulty
-                                    alone.
+                                    Code-generated signals do well only when progress can be written as compact rules
+                                    over small, structured state and action spaces. Methods that call an LLM at each
+                                    decision interpret open-ended inputs directly and are more consistently competitive.
+                                    Still, no method is strongly Q-aligned in the most open-ended environments.
+                                </p>
+                            </div>
+
+                            <p class="find-group">Beyond ranking</p>
+                            <div class="finding">
+                                <h3>Raw scores can be poorly calibrated.</h3>
+                                <p>
+                                    Q-alignment ignores the scale of the scores, which can matter for training. On
+                                    ALFWorld, <code>direct-16</code> and <code>eureka</code> have a raw MSE of 0.07 and
+                                    0.61 against reference values; an affine fit reduces both to about 0.002–0.003. A
+                                    well-ordered signal may still need normalization.
+                                </p>
+                            </div>
+                            <div class="finding">
+                                <h3>Selection loss complements Q-alignment.</h3>
+                                <p>
+                                    Guided search executes only the top-scoring action. Selection loss measures the
+                                    reference value lost by that choice, and tracks guided-search success about as
+                                    closely as Spearman (Pearson <i>r</i> = −0.977 on FrozenLake, −0.953 on ALFWorld).
                                 </p>
                             </div>
 
@@ -598,48 +673,44 @@ evaluator_extractor:          # method text → number
                                 <h3>Text beats vision.</h3>
                                 <p>
                                     On environments that provide both, methods recover reference values more reliably
-                                    from text than from images. Parsing pixels is harder, and the extra visual context
-                                    does not compensate for the model–method pairs we examine. This reflects the
-                                    abstraction available to each modality and the backbones' modality-specific
-                                    performance, not an intrinsic inferiority of visual feedback.
+                                    from text than from images. Text observations often give compact state
+                                    abstractions, whereas image-based methods must infer them from pixels, so this does
+                                    not show that visual feedback is intrinsically inferior.
                                 </p>
                             </div>
                             <div class="finding">
                                 <h3>Rankings survive the choice of target.</h3>
                                 <p>
-                                    Relabelling with state-values <code>V(s)</code> instead of Q-values largely
-                                    preserves the method ordering, so the conclusions don't hinge on a single target.
-                                    Absolute scores do shift (e.g., code and pre-trained methods align better with
-                                    state-values, direct prompting with Q-values), reflecting method preferences for
-                                    input consumption.
+                                    Relabelling with state values <code>V(s)</code> instead of Q-values largely
+                                    preserves the method ordering. Absolute scores do shift: code and pre-trained
+                                    methods align better with state values, direct prompting with Q-values.
                                 </p>
                             </div>
                             <div class="finding">
-                                <h3>Labels are robust to the reference backbone.</h3>
+                                <h3>Labels are stable.</h3>
                                 <p>
-                                    On TerminalBench, reference values estimated by two independent frontier models
-                                    (GPT-5.5 and Claude Opus 4.7) yield closely matching method correlations. The labels
-                                    capture a stable notion of downstream progress rather than one model's
-                                    idiosyncrasies.
+                                    On TerminalBench, re-estimating 100 labels with 128 instead of 16 continuations
+                                    leaves the method ranking nearly unchanged (ρ = 0.983, same best method). Labels
+                                    from GPT-5.5 and Claude Opus 4.7 as reference policies keep the sign of all nine
+                                    compared methods and their ranking, though magnitudes change.
                                 </p>
                             </div>
 
                             <p class="find-group">What it means</p>
                             <div class="finding">
-                                <h3>Signal quality is conflated with training recipes.</h3>
+                                <h3>Signal quality is one ingredient, not the whole recipe.</h3>
                                 <p>
-                                    Because plain prompting is so competitive when measured directly, much of the
-                                    reported progress of complex methods may stem from changes in data, compute,
-                                    exploration, prompting, or optimization rather than from a better dense signal.
-                                    Measuring alignment first separates the two.
+                                    Post-training success also depends on optimization, on how a signal enters the loss,
+                                    and on how it interacts with other signals. Some signals that align poorly with the
+                                    task objective may still help learning, for example as exploration incentives. QVal
+                                    isolates signal quality so these factors can be studied separately.
                                 </p>
                             </div>
                             <div class="finding">
-                                <h3>A low score rules a method out; a high score is a green light, not a guarantee.</h3>
+                                <h3>Compare against direct prompting first.</h3>
                                 <p>
-                                    QVal measures signal quality on its own and leaves integration as a separate
-                                    downstream question. It is a cheap diagnostic that filters candidate signals before
-                                    expensive training runs, not a replacement for them.
+                                    Because simple direct value prediction is so competitive when signals are compared
+                                    directly, future work should report it as a baseline when evaluating signal quality.
                                 </p>
                             </div>
                         </div>

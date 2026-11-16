@@ -1,12 +1,14 @@
 /* QVal interactive leaderboard — shared core.
  *
- * Builds a method x environment table from website/shared/data.json. Each draft
- * loads this module and themes the `lb-*` classes via its own CSS. One row per
+ * Builds a method x environment table from shared/data.json; the page themes
+ * the `lb-*` classes via its own CSS. One row per
  * method; cells are Spearman rho aggregated over the selected backbone(s).
+ * Views: the benchmark (Q targets, within-state rho) and two global-rho
+ * ablations (image observations; state-value targets).
  *
  * Usage:
- *   import { renderLeaderboard } from "../shared/leaderboard.js";
- *   renderLeaderboard(document.querySelector("#board"), { dataUrl: "../shared/data.json" });
+ *   import { renderLeaderboard } from "./shared/leaderboard.js";
+ *   renderLeaderboard(document.querySelector("#board"), { dataUrl: "shared/data.json" });
  */
 
 const SCALE = 0.8; // bar saturates at |rho| = 0.8 (values rarely exceed this)
@@ -14,8 +16,7 @@ const NEG_COLOR = "#9aa0a6";
 
 const state = {
   payload: null,
-  modality: "text",
-  signal: "q",
+  view: "bench",
   backbone: "__all__",
   families: new Set(), // empty => all families
   search: "",
@@ -25,7 +26,7 @@ const state = {
 
 let rootEl = null;
 
-export async function renderLeaderboard(el, { dataUrl = "../shared/data.json" } = {}) {
+export async function renderLeaderboard(el, { dataUrl = "shared/data.json" } = {}) {
   rootEl = el;
   el.classList.add("lb");
   el.innerHTML = `<p class="lb-loading">Loading results…</p>`;
@@ -42,10 +43,26 @@ export async function renderLeaderboard(el, { dataUrl = "../shared/data.json" } 
 
 /* ---------- option derivation ---------- */
 
+const VIEWS = {
+  bench: {
+    label: "Benchmark",
+    keep: (r) => r.signal === "q" && r.metric_type === "state-local",
+    note: `Cells show within-state Spearman&nbsp;&rho; against reference Q-values: the candidate actions of each state are ranked, and &rho; is averaged over states (higher = better aligned). LLM-based methods score text observations; embedding and pre-trained methods score images (<span class="lb-img-key">img</span>). <code>vlm-sor</code> is absent: its binary score is constant within most states.`,
+  },
+  image: {
+    label: "Image inputs",
+    keep: (r) => r.signal === "q" && r.modality === "image" && r.metric_type === "global",
+    note: `Modality ablation: every method scores image observations of OpenApps, ALFWorld and FrozenLake. Cells show global Spearman&nbsp;&rho; (all state–action pairs pooled) against reference Q-values, so they are not directly comparable to the Benchmark view.`,
+  },
+  v: {
+    label: "State-value target",
+    keep: (r) => r.signal === "v",
+    note: `Target ablation: cells show global Spearman&nbsp;&rho; against reference state values V(s) on OpenApps, ALFWorld and FrozenLake, so they are not directly comparable to the Benchmark view. <span class="lb-img-key">img</span> = scored on image observations.`,
+  },
+};
+
 function sliceRecords() {
-  return state.payload.records.filter(
-    (r) => r.modality === state.modality && r.signal === state.signal
-  );
+  return state.payload.records.filter(VIEWS[state.view].keep);
 }
 
 function backbonesInSlice(records) {
@@ -79,18 +96,8 @@ function buildShell() {
   rootEl.innerHTML = `
     <div class="lb-controls">
       <div class="lb-control">
-        <span class="lb-label">Observation</span>
-        ${seg("modality", [
-          { value: "text", label: "Text" },
-          { value: "image", label: "Vision" },
-        ], state.modality)}
-      </div>
-      <div class="lb-control">
-        <span class="lb-label">Target</span>
-        ${seg("signal", [
-          { value: "q", label: "Q-value" },
-          { value: "v", label: "State-value" },
-        ], state.signal)}
+        <span class="lb-label">View</span>
+        ${seg("view", Object.entries(VIEWS).map(([value, v]) => ({ value, label: v.label })), state.view)}
       </div>
       <label class="lb-control">
         <span class="lb-label">Backbone</span>
@@ -103,11 +110,7 @@ function buildShell() {
     </div>
     <div class="lb-families">${familyChips}</div>
     <div class="lb-tablewrap"><table class="lb-table"><thead></thead><tbody></tbody></table></div>
-    <p class="lb-note">
-      Cells show Spearman&nbsp;&rho; between a method's scores and reference Q-values
-      (higher = better aligned). Bars are signed; <span class="lb-neg-key">grey</span> = anti-aligned.
-      <span class="lb-sl-key">SL</span> = state-local metric (mean per-state &rho;), not directly comparable to the global &rho; other methods use.
-    </p>
+    <p class="lb-note"></p>
   `;
 
   rootEl.querySelectorAll(".lb-seg").forEach((segEl) => {
@@ -152,6 +155,9 @@ function update() {
     opts.map((m) => `<option value="${m}">${m}</option>`).join("");
   sel.value = state.backbone;
 
+  rootEl.querySelector(".lb-note").innerHTML =
+    `${VIEWS[state.view].note} Bars are signed; <span class="lb-neg-key">grey</span> = anti-aligned.`;
+
   rootEl.querySelectorAll(".lb-seg").forEach((segEl) => {
     const key = segEl.dataset.seg;
     segEl.querySelectorAll(".lb-seg-btn").forEach((btn) => {
@@ -170,12 +176,12 @@ function update() {
 /* ---------- table ---------- */
 
 function aggregate(records) {
-  // method -> { family, metricType, env -> [values] }
+  // method -> { family, modality, env -> [values] }
   const byMethod = new Map();
   for (const r of records) {
     if (state.backbone !== "__all__" && r.model !== state.backbone) continue;
     if (!byMethod.has(r.method))
-      byMethod.set(r.method, { family: r.family, metricType: r.metric_type, envs: {} });
+      byMethod.set(r.method, { family: r.family, modality: r.modality, envs: {} });
     const m = byMethod.get(r.method);
     (m.envs[r.environment] = m.envs[r.environment] || []).push(r.spearman);
   }
@@ -213,7 +219,7 @@ function renderTable() {
       } else cells[env] = null;
     }
     const avg = present.length ? mean(present) : null;
-    return { name, family: info.family, metricType: info.metricType, cells, avg };
+    return { name, family: info.family, modality: info.modality, cells, avg };
   });
 
   rows.sort((a, b) => {
@@ -253,7 +259,7 @@ function renderTable() {
   // body
   const tbody = rootEl.querySelector(".lb-table tbody");
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td class="lb-empty" colspan="${envs.length + 2}">No methods match this view — try a different Observation or Target, or clear the family filter. (Embedding &amp; some Pre-trained methods only have State-value results.)</td></tr>`;
+    tbody.innerHTML = `<tr><td class="lb-empty" colspan="${envs.length + 2}">No methods match this view — try a different view or clear the family filter.</td></tr>`;
     return;
   }
   const color = (fam) => meta.family_colors[fam];
@@ -270,12 +276,15 @@ function renderTable() {
 
   tbody.innerHTML = rows
     .map((row, i) => {
-      const sl = row.metricType === "state-local" ? `<sup class="lb-badge" title="state-local metric">SL</sup>` : "";
+      const badge =
+        state.view !== "image" && row.modality === "image"
+          ? `<sup class="lb-badge" title="scored on image observations">img</sup>`
+          : "";
       return `<tr style="--fam:${color(row.family)}">
         <td class="lb-method">
           <span class="lb-rank">${i + 1}</span>
           <span class="lb-dot"></span>
-          <span class="lb-mname">${row.name}${sl}</span>
+          <span class="lb-mname">${row.name}${badge}</span>
           <span class="lb-fam">${row.family}</span>
         </td>
         ${state.payload.meta.environments.map((e) => cell(row.cells[e], row.family)).join("")}

@@ -258,7 +258,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.5rem;line-heig
 .lb-empty{padding:30px;text-align:center;color:var(--muted)}
 .lb-note{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55;text-align:left;margin-inline:0}
 .lb-neg-key{color:#8a8170}
-.lb-sl-key{color:var(--accent);font-family:var(--mono)}
+.lb-img-key{color:var(--accent);font-family:var(--mono)}
 
 /* responsive */
 @media(max-width:860px){
