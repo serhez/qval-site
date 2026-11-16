@@ -1,9 +1,9 @@
-@article{hernandezgutierrez2026qval,
+@inproceedings{hernandezgutierrez2026qval,
   title         = {{QVal}: Evaluating Dense Supervision Signals for Long-Horizon {LLM} Agents},
   author        = {Hern{\'a}ndez-Guti{\'e}rrez, Sergio and Merler, Matteo and Auzina, Ilze Amanda and Str{\"u}ber, Joschka and Prabhu, Ameya and Bethge, Matthias},
+  booktitle     = {Advances in Neural Information Processing Systems},
   year          = {2026},
   eprint        = {2606.32034},
   archivePrefix = {arXiv},
-  journal       = {arXiv preprint arXiv:2606.32034},
   url           = {https://arxiv.org/abs/2606.32034}
 }

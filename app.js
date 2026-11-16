@@ -10,7 +10,7 @@ fetch("shared/bibtex.txt")
         document.getElementById("bibtex").textContent = t.trim();
     })
     .catch(() => {
-        document.getElementById("bibtex").textContent = "@article{hernandezgutierrez2026qval, ...}";
+        document.getElementById("bibtex").textContent = "@inproceedings{hernandezgutierrez2026qval, ...}";
     });
 
 /* ---- lightweight syntax highlighting (no deps) ----
