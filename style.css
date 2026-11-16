@@ -21,7 +21,8 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
 a{color:var(--accent);text-underline-offset:2px}
 a:hover{color:var(--accent-2)}
-code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:1px 6px;border-radius:4px}
+code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:1px 6px;border-radius:4px;
+  overflow-wrap:anywhere}
 sup{font-size:.62em}
 .em{color:var(--accent);font-style:italic}
 .muted{color:var(--muted)}
@@ -137,6 +138,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 .eq i{font-style:italic}
 .eq sup{font-size:.6em;font-style:italic;vertical-align:.55em;margin-left:.02em}
 .eq-op{font-style:normal;margin:0 .55em;color:var(--ink-2)}
+.eq-side{white-space:nowrap}
 .eq-where{display:block;margin-top:20px;font-size:1.02rem;color:var(--muted)}
 .figure-hero{margin:30px 0 0}
 .figure-hero img{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line-2);
@@ -150,7 +152,8 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 .codeblock{border:1px solid var(--line-2);border-radius:10px;overflow:hidden;background:var(--card);min-width:0}
 .code-head{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;
   border-bottom:1px solid var(--line);font-family:var(--sans);font-size:.78rem;color:var(--muted);background:var(--paper)}
-.code-head span{font-family:var(--mono);font-size:.8rem;color:var(--ink-2);letter-spacing:.01em}
+.code-head span{font-family:var(--mono);font-size:.8rem;color:var(--ink-2);letter-spacing:.01em;
+  min-width:0;overflow-wrap:anywhere}
 .code-head span::before{content:"/";color:var(--accent);font-weight:600}
 .codeblock pre{margin:0;padding:14px 16px;overflow-x:auto}
 .codeblock code{background:none;padding:0;font-family:var(--mono);font-size:.82rem;color:var(--ink);
@@ -268,7 +271,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 .lb-empty{padding:30px;text-align:center;color:var(--muted)}
 .lb-note{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.55;text-align:left;margin-inline:0}
 .lb-neg-key{color:#8a8170}
-.lb-sl-key{color:var(--accent);font-family:var(--mono)}
+.lb-img-key{color:var(--accent);font-family:var(--mono)}
 
 /* responsive */
 @media(max-width:860px){
@@ -278,7 +281,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
   .env-row{grid-template-columns:repeat(2,1fr)}
   .stat{min-width:30%}
   .eq{padding:26px 16px}
-  .eq-body{font-size:1.55rem}
+  .eq-body{font-size:1.55rem;white-space:normal}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}.caret{animation:none}}
 
@@ -325,7 +328,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 .pipe .px-join-arrow{font-size:1.4rem;color:var(--accent);line-height:1}
 
 /* right act — confluence: two orderings → ρ */
-.pipe .px-align{flex:1 1 auto;min-width:0;max-width:440px}
+.pipe .px-align{flex:1 1 0;min-width:0;max-width:520px}
 .pipe .pc-diagram{min-width:0}
 .pipe .pc-diagram svg{display:block;width:100%;height:auto;overflow:visible}
 .pipe .pc-hd{font-family:var(--sans);font-weight:700;font-size:17px;fill:var(--muted);text-anchor:middle}
@@ -337,7 +340,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 .pipe .pc-link--ok{stroke:rgba(133,124,110,.55)}
 .pipe .pc-link--x{stroke:var(--accent)}
 .pipe .pc-converge path{stroke:var(--line-2);stroke-width:1.4}
-.pipe .pc-merge{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.pipe .pc-merge{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;margin-top:8px}
 .pipe .pc-rho{font-family:var(--mono);font-weight:700;font-size:2rem;line-height:1;color:var(--accent)}
 .pipe .pc-merge-l{font-family:var(--sans);font-size:.82rem;line-height:1.3;color:var(--muted)}
 
@@ -389,11 +392,11 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:1.75rem;line-hei
 @keyframes pcin-r{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 
 /* narrow screens: stack the two acts, point the handoff arrow down */
-@media(max-width:720px){
+@media(max-width:900px){
   .pipe .px{flex-direction:column;gap:22px}
   .pipe .px-make{flex:0 0 auto;width:100%;max-width:340px}
   .pipe .px-join-arrow{transform:rotate(90deg)}
-  .pipe .px-align{max-width:100%;width:100%}
+  .pipe .px-align{flex:0 0 auto;width:100%;max-width:520px}
 }
 
 /* reduced motion: show the final composition, no animation */
